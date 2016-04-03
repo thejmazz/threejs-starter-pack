@@ -11,6 +11,7 @@ using
 
 - [ES2015](https://babeljs.io/docs/plugins/preset-es2015/)
 - [webpack](https://webpack.github.io/)
+- [html-webpack-plugin](https://github.com/ampedandwired/html-webpack-plugin)
 
 ## Running
 

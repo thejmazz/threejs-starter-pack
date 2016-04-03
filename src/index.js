@@ -1,15 +1,17 @@
 'use strict'
 
-const W = window.innerWidth
-const H = window.innerHeight
+import THREE from 'three/three.js'
+window.THREE = THREE
 
-window.THREE = require('three/three.js')
-window.scene = new THREE.Scene()
+import { createScene, createStats } from './create.js'
 
-const camera = new THREE.PerspectiveCamera(75, W/H, 1, 1000)
+const { scene, camera, renderer } = createScene({})
+window.scene = scene
+
 camera.position.set(0,0,2)
 
 const keyframes = []
+// import sceneGraph from './scene'
 const sceneGraph = require('./scene')
 for (let obj3DKey of Object.keys(sceneGraph)) {
   const obj3D = sceneGraph[obj3DKey]
@@ -22,18 +24,19 @@ for (let obj3DKey of Object.keys(sceneGraph)) {
   scene.add(obj3D)
 }
 
-const renderer = new THREE.WebGLRenderer({antialias: false})
-renderer.setSize(W, H)
-document.body.appendChild(renderer.domElement)
-
+const stats = createStats()
 const render = () => {
-  requestAnimationFrame(render)
+  stats.begin()
 
   for (let keyframe of keyframes) {
     keyframe()
   }
 
   renderer.render(scene, camera)
+
+  stats.end()
+
+  requestAnimationFrame(render)
 }
 
 render()
