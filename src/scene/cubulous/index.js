@@ -4,11 +4,14 @@ export default () => {
 
   const size = 1
 
-  const main = new THREE.Mesh(new THREE.BoxGeometry(size, size, size), normalMat)
+  const main = new THREE.Mesh(
+    new THREE.BoxGeometry(size, size, size),
+    new THREE.MeshPhongMaterial({color: 0xad3b87, wireframe: false, transparent: false, opacity: 0.8})
+  )
   const top = new THREE.SceneUtils.createMultiMaterialObject(
     new THREE.BoxGeometry(size/2, size/2, size/2),
-    [ new THREE.MeshBasicMaterial({color: 0xad3b87, wireframe: false}),
-      new THREE.MeshBasicMaterial({color: 0x06b1e7, wireframe: true})]
+    [ new THREE.MeshPhongMaterial({color: 0xad3b87, wireframe: false, transparent: false, opacity: 0.8, side: THREE.DoubleSide}),
+      new THREE.MeshBasicMaterial({color: 0x000000, wireframe: true})]
   )
   const left = top.clone()
   const right = top.clone()

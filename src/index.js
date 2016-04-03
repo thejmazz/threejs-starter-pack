@@ -5,7 +5,9 @@ window.THREE = THREE
 
 import { createScene, createStats } from './lib/create.js'
 
-const { scene, camera, renderer } = createScene({})
+const { scene, camera, renderer } = createScene({
+  clearColor: 0x000000
+})
 window.scene = scene
 
 camera.position.set(0,0,2)
