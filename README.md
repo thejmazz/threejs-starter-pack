@@ -42,17 +42,19 @@ and these keyframe functions will be ran in the render loop. Consider this
 example scene:
 
 ```js
-const boxGeom = new THREE.BoxGeometry(1, 1, 1)
-const normalMat = new THREE.MeshNormalMaterial()
+export default () => {
+  const boxGeom = new THREE.BoxGeometry(1, 1, 1)
+  const normalMat = new THREE.MeshNormalMaterial()
 
-const box = new THREE.Mesh(boxGeom, normalMat)
+  const box = new THREE.Mesh(boxGeom, normalMat)
 
-box.keyframe = () => {
-  box.rotation.x += 0.01
-  box.rotation.y += 0.01
+  box.keyframe = () => {
+    box.rotation.x += 0.01
+    box.rotation.y += 0.01
+  }
+
+  return({ box })
 }
-
-module.exports = { box }
 ```
 
 In this way, you can keep animation properties close to your meshes, instead
@@ -64,3 +66,5 @@ of relying on accessing global variables for your objects in the render loop.
 - screen auto resize
 - [ccapture.js](https://github.com/spite/ccapture.js/)
 - [three-glslify](https://www.npmjs.com/package/three-glslify)
+- callback free loading
+- option to add resource to initial load queue
