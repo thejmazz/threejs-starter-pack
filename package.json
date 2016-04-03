@@ -1,0 +1,19 @@
+{
+  "name": "threejs-starter-pack",
+  "version": "0.1.0",
+  "description": "Starting pack for three.js projects.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thejmazz/threejs-starter-pack.git"
+  },
+  "author": "Julian Mazzitelli <mazzitelli.julian@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thejmazz/threejs-starter-pack/issues"
+  },
+  "homepage": "https://github.com/thejmazz/threejs-starter-pack#readme"
+}
