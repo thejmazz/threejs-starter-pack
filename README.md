@@ -11,6 +11,12 @@ using
 - [ES2015](https://babeljs.io/docs/plugins/preset-es2015/)
 - [webpack](https://webpack.github.io/)
 
-Coming soon
+## Running
 
+`npm start` in one tab and `npm run serve` in another.
+
+## Coming soon
+
+- screen auto resize
 - [ccapture.js](https://github.com/spite/ccapture.js/)
+- [three-glslify](https://www.npmjs.com/package/three-glslify)
