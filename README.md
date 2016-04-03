@@ -16,6 +16,48 @@ using
 
 `npm start` in one tab and `npm run serve` in another.
 
+## Structure
+
+```
+.
+├── README.md
+├── dist
+│   ├── bundle.js
+│   ├── bundle.js.map
+│   └── index.html
+├── package.json
+├── src
+│   ├── index.html
+│   ├── index.js
+│   └── scene
+│       └── index.js
+└── webpack.config.js
+```
+
+`src/index.js` is responsible for initializing the scene, and populating it
+using `Object3D`s exported from `src/scene/index.js`. Each `Object3D` can
+attach a function to the `keyframe` key, change properties through closures,
+and these keyframe functions will be ran in the render loop. Consider this
+example scene:
+
+```js
+const boxGeom = new THREE.BoxGeometry(1, 1, 1)
+const normalMat = new THREE.MeshNormalMaterial()
+
+const box = new THREE.Mesh(boxGeom, normalMat)
+
+box.keyframe = () => {
+  box.rotation.x += 0.01
+  box.rotation.y += 0.01
+}
+
+module.exports = { box }
+```
+
+In this way, you can keep animation properties close to your meshes, instead
+of relying on accessing global variables for your objects in the render loop.
+
+
 ## Coming soon
 
 - screen auto resize
