@@ -5,6 +5,7 @@ Get up and going with
 - [three.js](http://threejs.org/) (R75)
 - [stats.js](https://github.com/mrdoob/stats.js/)
 - [dat.gui](https://github.com/dataarts/dat.gui)
+- works with [three.js inspector](https://chrome.google.com/webstore/detail/threejs-inspector/dnhjfclbfhcbcdfpjaeacomhbdfjbebi?hl=en)
 
 using
 

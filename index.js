@@ -5,7 +5,7 @@ window.THREE = require('three/three.js')
 const W = window.innerWidth
 const H = window.innerHeight
 
-const scene = new THREE.Scene()
+window.scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(75, W/H, 1, 1000)
 camera.position.set(0,0,2)
 
