@@ -68,3 +68,4 @@ of relying on accessing global variables for your objects in the render loop.
 - [three-glslify](https://www.npmjs.com/package/three-glslify)
 - callback free loading
 - option to add resource to initial load queue
+- easy to use web audio context
