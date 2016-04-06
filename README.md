@@ -69,4 +69,4 @@ of relying on accessing global variables for your objects in the render loop.
 - callback free loading
 - option to add resource to initial load queue
 - easy to use web audio context
-- [shader editor chrome extension](https://chrome.google.com/webstore/detail/shader-editor/ggeaidddejpbakgafapihjbgdlbbbpob
+- [shader editor chrome extension](https://chrome.google.com/webstore/detail/shader-editor/ggeaidddejpbakgafapihjbgdlbbbpob)
