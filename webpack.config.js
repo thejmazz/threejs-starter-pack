@@ -1,6 +1,7 @@
 'use strict'
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   entry: [
@@ -18,8 +19,13 @@ module.exports = {
       loader: 'babel'
     }]
   },
-  plugins: [new HtmlWebpackPlugin({
-    title: 'My Three Project',
-    template: './src/index.html'
-  })]
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: 'My Three Project',
+      template: './src/index.html'
+    }),
+    new CopyWebpackPlugin([{
+      from: 'public'
+    }])
+  ]
 }

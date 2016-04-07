@@ -26,6 +26,9 @@ for (let obj3DKey of Object.keys(sceneGraph)) {
   scene.add(obj3D)
 }
 
+window.capturer = new CCapture( { format: 'png' } )
+// capturer.start()
+
 const stats = createStats()
 const render = () => {
   stats.begin()
@@ -35,6 +38,7 @@ const render = () => {
   }
 
   renderer.render(scene, camera)
+  capturer.capture(renderer.domElement)
 
   stats.end()
 
