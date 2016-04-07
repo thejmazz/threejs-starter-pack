@@ -26,6 +26,9 @@ module.exports = {
     }),
     new CopyWebpackPlugin([{
       from: 'public'
+    }, {
+      from: 'node_modules/three/examples/js/loaders/OBJLoader.js',
+      to: 'js'
     }])
   ]
 }
