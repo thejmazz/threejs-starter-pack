@@ -70,3 +70,4 @@ of relying on accessing global variables for your objects in the render loop.
 - option to add resource to initial load queue
 - easy to use web audio context
 - [shader editor chrome extension](https://chrome.google.com/webstore/detail/shader-editor/ggeaidddejpbakgafapihjbgdlbbbpob)
+- [pollinate](https://github.com/howardroark/pollinate) template
