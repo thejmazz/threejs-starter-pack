@@ -5,6 +5,7 @@ Get up and going with
 - [three.js](http://threejs.org/) (R75)
 - [stats.js](https://github.com/mrdoob/stats.js/)
 - [dat.gui](https://github.com/dataarts/dat.gui)
+- [ccapture.js](https://github.com/spite/ccapture.js/)
 - works with [three.js inspector](https://chrome.google.com/webstore/detail/threejs-inspector/dnhjfclbfhcbcdfpjaeacomhbdfjbebi?hl=en)
 
 using
@@ -12,6 +13,7 @@ using
 - [ES2015](https://babeljs.io/docs/plugins/preset-es2015/)
 - [webpack](https://webpack.github.io/)
 - [html-webpack-plugin](https://github.com/ampedandwired/html-webpack-plugin)
+- [copy-webpack-plugin](https://github.com/kevlened/copy-webpack-plugin)
 
 ## Running
 
@@ -64,7 +66,6 @@ of relying on accessing global variables for your objects in the render loop.
 ## Coming soon
 
 - screen auto resize
-- [ccapture.js](https://github.com/spite/ccapture.js/)
 - [three-glslify](https://www.npmjs.com/package/three-glslify)
 - callback free loading
 - option to add resource to initial load queue
