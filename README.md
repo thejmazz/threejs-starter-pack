@@ -62,6 +62,9 @@ export default () => {
 In this way, you can keep animation properties close to your meshes, instead
 of relying on accessing global variables for your objects in the render loop.
 
+## Gotchas
+
+- need to `ctrl-c` and `npm start` after modifying texture and model and files
 
 ## Coming soon
 
