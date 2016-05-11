@@ -12,6 +12,10 @@ window.scene = scene
 
 
 camera.position.set(0,0,2)
+const cLight = new THREE.PointLight(0xffffff, 1, 1000)
+camera.add(cLight)
+cLight.position.set(0,0,-1)
+scene.add(camera)
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement)
 
