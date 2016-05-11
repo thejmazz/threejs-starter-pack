@@ -22,7 +22,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Mitochondria',
+      title: 'ThreeJS Experiment',
       template: './src/index.html'
     }),
     // TODO exclude .DS_Store

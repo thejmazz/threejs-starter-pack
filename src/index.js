@@ -1,6 +1,6 @@
 'use strict'
 
-import THREE from 'three/three.js'
+// import THREE from 'three/three.js'
 window.THREE = THREE
 
 import { createScene, createStats } from './lib/create.js'
@@ -10,7 +10,10 @@ const { scene, camera, renderer } = createScene({
 })
 window.scene = scene
 
+
 camera.position.set(0,0,2)
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement)
 
 import sceneGraphConstructor from './scene'
 const sceneGraph = sceneGraphConstructor()
