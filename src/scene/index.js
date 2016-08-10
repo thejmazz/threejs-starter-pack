@@ -1,5 +1,6 @@
 // import cubulousCreator from './cubulous'
 // import lightsCreator from './lights'
+import { shaderMaterial } from '../materials/shadermaterial.js'
 
 export default () => {
   // const { obj } = cubulousCreator()
@@ -12,7 +13,8 @@ export default () => {
 
   const cube = new THREE.Mesh(
     new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshNormalMaterial()
+    shaderMaterial
+    // new THREE.MeshNormalMaterial()
   )
 
   return({ plane, cube })

@@ -18,6 +18,9 @@ module.exports = {
       test: /\.js?$/,
       exclude: /(node_modules)/,
       loader: 'babel'
+    }, {
+      test: /\.glsl$/,
+      loader: 'raw'
     }]
   },
   plugins: [
