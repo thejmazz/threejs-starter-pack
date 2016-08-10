@@ -3,13 +3,12 @@ import frag from '../shaders/frag.glsl'
 
 console.log('vert: ', vert)
 
-const uniforms = {
-    time:       { value: 1.0 },
-    resolution: { value: new THREE.Vector2() }
+export const uniforms = {
+    time: { type: 'f', value: 0.0, step: 0.03 }
 }
 
 export const shaderMaterial = new THREE.ShaderMaterial({
-  uniforms,
+  uniforms: uniforms,
   vertexShader: vert,
   fragmentShader: frag
 })

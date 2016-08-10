@@ -36,6 +36,8 @@ for (let obj3DKey of Object.keys(sceneGraph)) {
 window.capturer = new CCapture( { format: 'png' } )
 // capturer.start()
 
+import { uniforms } from './materials/shadermaterial.js'
+
 const stats = createStats()
 const render = () => {
   stats.begin()
@@ -45,6 +47,9 @@ const render = () => {
   }
 
   renderer.render(scene, camera)
+
+  uniforms.time.value += uniforms.time.step
+
   capturer.capture(renderer.domElement)
 
   stats.end()
