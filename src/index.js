@@ -10,11 +10,16 @@ const { scene, camera, renderer } = createScene({
 })
 window.scene = scene
 
-camera.position.set(0,4,2)
+// camera.position.set(0,4,2)
+camera.position.set(7, 3, 7)
+// camera.position.set(0.1, 0.1, 0.1)
 const cLight = new THREE.PointLight(0xffffff, 1, 1000)
 camera.add(cLight)
-cLight.position.set(0,0,-1)
+cLight.position.set(0,0,-0.1)
 scene.add(camera)
+
+const ambientLight = new THREE.AmbientLight( 0x404040 )
+scene.add(ambientLight)
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement)
 
@@ -54,8 +59,8 @@ const position = ({ x, y, z }) => new THREE.Vector3(x, y, z)
 
 const positions = []
 
-const minX = -5
-const minZ = -5
+const minX = -10
+const minZ = -10
 const maxX = 5
 const maxZ = 5
 const minY = -5
@@ -75,15 +80,28 @@ for (let x = minX; x < maxX; x++) {
   }
 }
 
-import { flatUIHexColors } from './lib/colour-utils.js'
+import { flatUIHexColors, generateShades, blues } from './lib/colour-utils.js'
+
+const shades = generateShades('235', 10, 80, 90).map(color => new THREE.Color(color))
+console.log(shades)
+
+const pick = (arr) => arr[Math.floor(Math.random() * arr.length)]
+
+const randomShade = () => shades[Math.floor(Math.random() * shades.length)]
 
 for (let x = minX; x < maxX; x++) {
   for (let z = minZ; z < maxZ; z++) {
     for (let y = minY; y < maxY; y++) {
 
-      const material = new THREE.MeshLambertMaterial({ color: flatUIHexColors[Math.floor(Math.random() * flatUIHexColors.length)] })
-      material.transparent = true
-      material.opacity = 0.5
+      // const material = new THREE.MeshLambertMaterial({ color: flatUIHexColors[Math.floor(Math.random() * flatUIHexColors.length)] })
+      // material.transparent = true
+      // material.opacity = 0.5
+
+      // const color = 0x0E50F2
+      // const color = randomShade
+      const color = pick(blues)
+      const material = new THREE.MeshLambertMaterial({ color })
+      // material.color = randomShade()
 
       const cube = new THREE.Mesh(
         new THREE.BoxGeometry(1, 1, 1),
@@ -93,8 +111,11 @@ for (let x = minX; x < maxX; x++) {
       // cube.position.set(positionsXZ[x].x, positionsXZ[y].y, positionsXZ[z])
       cube.position.set(x, y, z)
 
-      scene.add(cube)
+      const rand = Math.random()
 
+      if (rand > 0.2) {
+        scene.add(cube)
+      }
     }
   }
 }
