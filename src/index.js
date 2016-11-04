@@ -11,12 +11,21 @@ const { scene, camera, renderer } = createScene({
 window.scene = scene
 
 // camera.position.set(0,4,2)
-camera.position.set(7, 3, 7)
+// camera.position.set(7, 3, 7)
 // camera.position.set(0.1, 0.1, 0.1)
+// camera.position.set(200, 100, 200)
+
+camera.position.set(0, 1, 0)
+
 const cLight = new THREE.PointLight(0xffffff, 1, 1000)
 camera.add(cLight)
 cLight.position.set(0,0,-0.1)
 scene.add(camera)
+
+camera.zoom = 40
+camera.updateProjectionMatrix()
+
+console.log(camera.zoom)
 
 const ambientLight = new THREE.AmbientLight( 0x404040 )
 scene.add(ambientLight)
@@ -89,6 +98,16 @@ const pick = (arr) => arr[Math.floor(Math.random() * arr.length)]
 
 const randomShade = () => shades[Math.floor(Math.random() * shades.length)]
 
+const floor = new THREE.Mesh(
+  new THREE.BoxGeometry(500, 1, 500),
+  new THREE.MeshLambertMaterial({ color: 0x78FFF3 })
+)
+floor.position.set(0, -7, 0)
+// scene.add(floor)
+
+const rand = (min, max) => Math.random() * (max - min) + min
+
+const cubes = []
 for (let x = minX; x < maxX; x++) {
   for (let z = minZ; z < maxZ; z++) {
     for (let y = minY; y < maxY; y++) {
@@ -99,7 +118,8 @@ for (let x = minX; x < maxX; x++) {
 
       // const color = 0x0E50F2
       // const color = randomShade
-      const color = pick(blues)
+      // const color = pick(blues)
+      const color = pick(flatUIHexColors)
       const material = new THREE.MeshLambertMaterial({ color })
       // material.color = randomShade()
 
@@ -110,16 +130,51 @@ for (let x = minX; x < maxX; x++) {
       )
       // cube.position.set(positionsXZ[x].x, positionsXZ[y].y, positionsXZ[z])
       cube.position.set(x, y, z)
+      const amplitude = Math.random() * 10 + 1
+      cubes.push({
+        x, y, z,
+        mesh: cube,
+        amplitude: {
+          x: rand(1, 10),
+          y: rand(1, 10),
+          z: rand(1, 10)
+        }
+      })
 
-      const rand = Math.random()
-
-      if (rand > 0.2) {
+      if (Math.random() > 0.5) {
         scene.add(cube)
       }
     }
   }
 }
 
+const base = 0
+
+const update = (delta) => {
+  for (let cube of cubes) {
+    // cube.position.y = 0 + Math.sin(delta/500) * 100
+    const { x, y, z, mesh, amplitude } = cube
+    mesh.position.y = y + Math.sin(delta/500) * amplitude.y
+    mesh.position.x = x + Math.cos(delta/500) * amplitude.x
+    mesh.position.z = z + Math.sin(delta/500) * Math.cos(delta/500) * amplitude.z
+
+    // if (cube.dir === 'up') {
+    //   amplitude.x += amplitudeStep
+    //   amplitude.y += amplitudeStep
+    //   amplitude.z += amplitudeStep
+    // } else {
+    //   amplitude.x -= amplitudeStep
+    //   amplitude.y -= amplitudeStep
+    //   amplitude.z -= amplitudeStep
+    // }
+
+    // if (amplitude.x > cube.amplitudeMax.x) {
+    //   cube.dir = 'down'
+    // } else if (amplitude.x < 0) {
+    //   cube.dir = 'up'
+    // }
+  }
+}
 
 cube2.position.x = -3
 cube2.position.z = -2
@@ -132,7 +187,8 @@ window.capturer = new CCapture( { format: 'png' } )
 import { uniforms } from './materials/shadermaterial.js'
 
 const stats = createStats()
-const render = () => {
+const clock = new THREE.Clock()
+const render = (ts) => {
   stats.begin()
 
   // for (let keyframe of keyframes) {
@@ -141,6 +197,7 @@ const render = () => {
 
   renderer.render(scene, camera)
 
+  update(ts)
   uniforms.time.value += uniforms.time.step
 
   capturer.capture(renderer.domElement)

@@ -50,8 +50,8 @@ export const createScene = ({
     window.innerWidth / 2,
     window.innerHeight / 2,
     window.innerHeight / - 2,
-    - 10,
-    20 )
+    - 100,
+    100 )
   const renderer = createRenderer(W, H, clearColor, size)
 
   return { scene, camera, renderer }
