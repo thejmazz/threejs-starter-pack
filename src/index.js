@@ -4,6 +4,9 @@
 window.THREE = THREE
 
 import { createScene, createStats } from './lib/create.js'
+// import dat from 'dat.gui'
+
+const gui = new dat.GUI()
 
 const { scene, camera, renderer } = createScene({
   clearColor: 0x000000
@@ -11,18 +14,18 @@ const { scene, camera, renderer } = createScene({
 window.scene = scene
 
 // camera.position.set(0,4,2)
-// camera.position.set(7, 3, 7)
+camera.position.set(60, 20, 0)
 // camera.position.set(0.1, 0.1, 0.1)
 // camera.position.set(200, 100, 200)
 
-camera.position.set(0, 1, 0)
+// camera.position.set(0, 1, 0)
 
 const cLight = new THREE.PointLight(0xffffff, 1, 1000)
 camera.add(cLight)
 cLight.position.set(0,0,-0.1)
 scene.add(camera)
 
-camera.zoom = 40
+// camera.zoom = 40
 camera.updateProjectionMatrix()
 
 console.log(camera.zoom)
@@ -98,12 +101,18 @@ const pick = (arr) => arr[Math.floor(Math.random() * arr.length)]
 
 const randomShade = () => shades[Math.floor(Math.random() * shades.length)]
 
-const floor = new THREE.Mesh(
-  new THREE.BoxGeometry(500, 1, 500),
-  new THREE.MeshLambertMaterial({ color: 0x78FFF3 })
-)
-floor.position.set(0, -7, 0)
-// scene.add(floor)
+// const floor = new THREE.Mesh(
+//   new THREE.BoxGeometry(500, 1, 500),
+//   new THREE.MeshLambertMaterial({ color: 0x78FFF3 })
+// )
+// floor.position.set(0, -7, 0)
+// const { plane } = meshes
+// scene.add(plane)
+
+// const plane2 = plane.clone()
+// plane2.position.set(0, -2, 0)
+// scene.add(plane2)
+
 
 const rand = (min, max) => Math.random() * (max - min) + min
 
@@ -142,7 +151,7 @@ for (let x = minX; x < maxX; x++) {
       })
 
       if (Math.random() > 0.5) {
-        scene.add(cube)
+        // scene.add(cube)
       }
     }
   }
@@ -150,36 +159,114 @@ for (let x = minX; x < maxX; x++) {
 
 const base = 0
 
-const update = (delta) => {
-  for (let cube of cubes) {
-    // cube.position.y = 0 + Math.sin(delta/500) * 100
-    const { x, y, z, mesh, amplitude } = cube
-    mesh.position.y = y + Math.sin(delta/500) * amplitude.y
-    mesh.position.x = x + Math.cos(delta/500) * amplitude.x
-    mesh.position.z = z + Math.sin(delta/500) * Math.cos(delta/500) * amplitude.z
-
-    // if (cube.dir === 'up') {
-    //   amplitude.x += amplitudeStep
-    //   amplitude.y += amplitudeStep
-    //   amplitude.z += amplitudeStep
-    // } else {
-    //   amplitude.x -= amplitudeStep
-    //   amplitude.y -= amplitudeStep
-    //   amplitude.z -= amplitudeStep
-    // }
-
-    // if (amplitude.x > cube.amplitudeMax.x) {
-    //   cube.dir = 'down'
-    // } else if (amplitude.x < 0) {
-    //   cube.dir = 'up'
-    // }
-  }
+function params () {
+  this.color = '#4498db'
+  this.wireframe = true
+  this.period = 1000
+  this.width = 100
+  this.widthSegments = 100
+  this.height = 100
+  this.heightSegments = 100
+  this.sinAmplitude = 2
+  this.cosAmplitude = 2
+  this.tanAmplitude = 0
+  this.sinXOffset = 0.2
+  this.sinYOffset = 0.2
+  this.cosXOffset = 0.2
+  this.cosYOffset = 0
+  this.tanXOffset = 0
+  this.tanYOffset = 0
 }
+
+const p = new params()
+
+const watchers = {}
+
+const widthController = gui.add(p, 'width', 100, 500)
+const heightController = gui.add(p, 'height', 100, 500)
+const wSegmentsCtrl = gui.add(p, 'widthSegments', 100, 500)
+const hSegmentsCtrl = gui.add(p, 'heightSegments', 100, 500)
+const colorCtrl = gui.addColor(p, 'color')
+watchers['wireframe'] = gui.add(p, 'wireframe')
+gui.add(p, 'period', 10, 5010).step(10)
+gui.add(p, 'sinAmplitude', 0, 50).step(1)
+gui.add(p, 'cosAmplitude', 0, 50).step(1)
+gui.add(p, 'tanAmplitude', 0, 50).step(1)
+gui.add(p, 'sinXOffset', 0, Math.PI)
+gui.add(p, 'sinYOffset', 0, Math.PI)
+gui.add(p, 'cosXOffset', 0, Math.PI)
+gui.add(p, 'cosYOffset', 0, Math.PI)
+gui.add(p, 'tanXOffset', 0, Math.PI)
+gui.add(p, 'tanYOffset', 0, Math.PI)
+
+const start = Date.now()
+function update() {
+  const delta = Date.now() - start;
+
+  plane.geometry.vertices.forEach((v) => {
+    v.z =
+      Math.sin(delta/p.period + v.x * p.sinXOffset + v.y * p.sinYOffset) * p.sinAmplitude +
+      Math.cos(delta/p.period + v.x * p.cosXOffset + v.y * p.cosYOffset) * p.cosAmplitude +
+      Math.tan(delta/p.period + v.x * p.tanXOffset + v.y * p.tanYOffset) * p.tanAmplitude
+  })
+
+  plane.geometry.verticesNeedUpdate = true;
+  plane.geometry.elementsNeedsUpdate = true;
+}
+
+const planeMaker = () => {
+  const geom = new THREE.PlaneGeometry(p.width, p.height, p.widthSegments, p.heightSegments)
+  const mat = new THREE.MeshBasicMaterial({ color: p.color, side: THREE.DoubleSide, wireframe: p.wireframe })
+
+  const plane = new THREE.Mesh(geom, mat)
+  plane.rotation.x = - Math.PI/2
+
+  return plane
+}
+
+let plane = planeMaker()
+scene.add(plane)
+
+widthController.onChange(() => {
+  scene.remove(plane)
+  plane = planeMaker()
+  scene.add(plane)
+})
+heightController.onChange(() => {
+  scene.remove(plane)
+  plane = planeMaker()
+  scene.add(plane)
+})
+wSegmentsCtrl.onChange(() => {
+  scene.remove(plane)
+  plane = planeMaker()
+  scene.add(plane)
+})
+hSegmentsCtrl.onChange(() => {
+  scene.remove(plane)
+  plane = planeMaker()
+  scene.add(plane)
+})
+colorCtrl.onChange(() => {
+  scene.remove(plane)
+  plane = planeMaker()
+  scene.add(plane)
+})
+Object.keys(watchers).forEach((key) => {
+  watchers[key].onChange(() => {
+    scene.remove(plane)
+    plane = planeMaker()
+    scene.add(plane)
+  })
+})
+
+
 
 cube2.position.x = -3
 cube2.position.z = -2
+cube2.position.y = 1
 
-scene.add(cube2)
+// scene.add(cube2)
 
 window.capturer = new CCapture( { format: 'png' } )
 // capturer.start()

@@ -44,14 +44,14 @@ export const createScene = ({
   }) => {
 
   const scene = new THREE.Scene()
-  // const camera = new THREE.PerspectiveCamera(fov, W / H, close, far)
-  const camera = new THREE.OrthographicCamera(
-    window.innerWidth / - 2,
-    window.innerWidth / 2,
-    window.innerHeight / 2,
-    window.innerHeight / - 2,
-    - 100,
-    100 )
+  const camera = new THREE.PerspectiveCamera(fov, W / H, close, far)
+  // const camera = new THREE.OrthographicCamera(
+  //   window.innerWidth / - 2,
+  //   window.innerWidth / 2,
+  //   window.innerHeight / 2,
+  //   window.innerHeight / - 2,
+  //   - 100,
+  //   100 )
   const renderer = createRenderer(W, H, clearColor, size)
 
   return { scene, camera, renderer }
