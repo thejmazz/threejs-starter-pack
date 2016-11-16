@@ -18,9 +18,9 @@ const controls = new THREE.OrbitControls(camera, renderer.domElement)
 
 // === LIGHT ===
 
-// const light = new THREE.PointLight(0xffffff, 1, 1000)
-// light.position.set(5, 10, 5)
-// scene.add(light)
+const light = new THREE.PointLight(0xffffff, 1, 1000)
+light.position.set(5, 10, 5)
+scene.add(light)
 
 const spotLight = new THREE.SpotLight(0xffffff)
 spotLight.position.set(10, 10, 10)
@@ -34,7 +34,7 @@ spotLight.shadow.camera.near = 1
 spotLight.shadow.camera.far = 10
 // spotLight.shadow.camera.fov = 30
 
-scene.add(spotLight)
+// scene.add(spotLight)
 // scene.add(new THREE.SpotLightHelper(spotLight))
 
 
@@ -51,8 +51,7 @@ const planeMaterial = new THREE.ShaderMaterial({
 
 const planeMaker = () => {
   const geom = new THREE.PlaneGeometry(100, 100, 10, 10)
-  // const mat = new THREE.MeshLambertMaterial({ color: 0x6D6961, side: THREE.DoubleSide, wireframe: false })
-  const mat = planeMaterial
+  const mat = new THREE.MeshLambertMaterial({ color: 0x6D6961, side: THREE.DoubleSide, wireframe: false })
 
   const plane = new THREE.Mesh(geom, mat)
   plane.rotation.x = - Math.PI/2
@@ -62,123 +61,45 @@ const planeMaker = () => {
 
 let plane = planeMaker()
 plane.receiveShadow = true
-// scene.add(plane)
+scene.add(plane)
 
-// === CARBON METAL OXIDE ===
+// === PYRAMID ===
 
-let cmo = null
-
-const carbonMetalOxideMaterial = new THREE.ShaderMaterial({
+const pyramidMaterial = new THREE.ShaderMaterial({
   uniforms: Object.assign({}, THREE.ShaderLib.lambert.uniforms, {
     time: { type: 'f', value: 0.0, step: 0.03 },
   }),
   vertexShader: glslify('./shaders/cmo-vert.glsl'),
-  fragmentShader: glslify('./shaders/cmo-frag.glsl'),
+  fragmentShader: glslify('./shaders/pyramid-frag.glsl'),
   lights: true
 })
 
-jsonLoader.load('models/cmo.json', (geometry) => {
-  const mesh = new THREE.Mesh(geometry, carbonMetalOxideMaterial)
-  cmo = mesh
-  mesh.position.set(0, 1.25, 0)
+const coneGeometry = ({
+  radius = 1,
+  height = 1,
+  radiusSegments = 3,
+  heightSegments = 1,
+  openEnded = false,
+  thetaStart = 0,
+  thetaLength = 2 * Math.PI
+} = {}) => new THREE.ConeGeometry(radius, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength)
 
-  mesh.castShadow = true
-
-  // scene.add(mesh)
-})
-
-// === OXYGEN ===
-
-const oxygen = new THREE.Mesh(
-  new THREE.IcosahedronGeometry(1, 2),
-  new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    emissive: 0x9f9f9f,
-    roughness: 0,
-    metalness: 0.1
-  })
+const pyramid = new THREE.Mesh(
+  coneGeometry(),
+  // new THREE.MeshLambertMaterial({ color: 0xDBDBDB })
+  pyramidMaterial
 )
 
-// === HYDROGEN ===
-
-const hydrogen = new THREE.Mesh(
-  new THREE.IcosahedronGeometry(1, 2),
-  new THREE.MeshStandardMaterial({
-    color: 0xff0000,
-    emissive: 0xc00000,
-    roughness: 0,
-    metalness: 0.1
-  })
-)
-
-// === PYRAMID ===
-
-const coneGeometry = {
-  radius: 6.6,
-  height: 10,
-  radiusSegments: 3,
-  heightSegments: 1,
-  openEnded: false,
-  thetaStart: 0,
-  thetaLength: 2 * Math.PI
-}
-
-const pyramidMaker = () => {
-  return new THREE.Mesh(
-    // new THREE.ConeGeometry(coneGeometry),
-    new THREE.BoxGeometry(),
-    new THREE.MeshLambertMaterial({ color: 0xDBDBDB })
-  )
-}
-
-const pyramid = pyramidMaker()
-pyramid.position.set(0, 0, 0)
-console.log(pyramid)
-
-// scene.add(pyramid)
-
-
-
-var geometry = new THREE.ConeGeometry( 5, 20, 32 );
-var material = new THREE.MeshLambertMaterial( {color: 0xffff00} );
-var cone = new THREE.Mesh( geometry, material );
-scene.add( cone );
-
-
-// === WATER ===
-
-const waterMaker = ([x, y, z], scale) => {
-  const o = oxygen.clone()
-  const h1 = hydrogen.clone()
-  const h2 = hydrogen.clone()
-
-  const hToOScale = 0.6
-  const xOff = 0.7
-  const yOff = 0.3
-
-  h1.scale.set(hToOScale, hToOScale, hToOScale)
-  h1.position.set(x + scale * xOff, y - scale * yOff, z)
-
-  h2.scale.set(hToOScale, hToOScale, hToOScale)
-  h2.position.set(x - scale * xOff, y - scale * yOff, z)
-
-  o.position.set(x, y, z)
-
-  o.add(h1)
-  o.add(h2)
-
-  return o
-}
+pyramid.position.set(0, 0.5, 0)
+scene.add(pyramid)
 
 
 // === LOOP ===
 
 const update = (ts, delta) => {
-  carbonMetalOxideMaterial.uniforms.time.value += carbonMetalOxideMaterial.uniforms.time.step
+  pyramidMaterial.uniforms.time.value += pyramidMaterial.uniforms.time.step
 
-  if (cmo) {
-    cmo.rotation.y += delta * Math.PI / 16
-  }
+  // pyramid.rotation.y += delta * Math.PI / 16
 }
 
 // === RENDER ===
