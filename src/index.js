@@ -61,13 +61,52 @@ const planeMaker = () => {
 
 let plane = planeMaker()
 plane.receiveShadow = true
-scene.add(plane)
+// scene.add(plane)
 
 // === PYRAMID ===
+
+const noiseTextureRGB = (noiseSize) => {
+  const size = noiseSize * noiseSize
+  const datalength = 4 * size // rgba
+  const data = new Uint8Array(datalength)
+
+  for (let i = 0; i < datalength; i++) {
+    data[i] = Math.random() * 255 | 0
+  }
+
+  const dt = new THREE.DataTexture(data, noiseSize, noiseSize, THREE.RGBAFormat)
+  dt.wrapS = THREE.RepeatWrapping
+  dt.wrapT = THREE.RepeatWrapping
+  dt.needsUpdate = true
+
+  return dt
+}
+
+const noiseTextureMonochrome = (noiseSize) => {
+  const size = noiseSize * noiseSize
+  const dataLength = size * 4
+  const data = new Uint8Array(dataLength)
+
+  for (let i = 0; i < dataLength; i += 4) {
+    const value = Math.random() * 255 | 0
+    data[i] = value
+    data[i + 1] = value
+    data[i + 2] = value
+    data[i + 3] = 1
+  }
+
+  const dt = new THREE.DataTexture(data, noiseSize, noiseSize, THREE.RGBAFormat)
+  dt.wrapS = THREE.RepeatWrapping
+  dt.wrapT = THREE.RepeatWrapping
+  dt.needsUpdate = true
+
+  return dt
+}
 
 const pyramidMaterial = new THREE.ShaderMaterial({
   uniforms: Object.assign({}, THREE.ShaderLib.lambert.uniforms, {
     time: { type: 'f', value: 0.0, step: 0.03 },
+    noiseTexture: { type: 't', value: noiseTextureMonochrome(256) }
   }),
   vertexShader: glslify('./shaders/cmo-vert.glsl'),
   fragmentShader: glslify('./shaders/pyramid-frag.glsl'),
@@ -91,7 +130,14 @@ const pyramid = new THREE.Mesh(
 )
 
 pyramid.position.set(0, 0.5, 0)
-scene.add(pyramid)
+// scene.add(pyramid)
+
+const screen = new THREE.Mesh(
+  new THREE.PlaneGeometry(1, 1, 1, 1),
+  pyramidMaterial
+)
+
+scene.add(screen)
 
 
 // === LOOP ===

@@ -8,6 +8,8 @@
 uniform vec3 emissive;
 uniform float opacity;
 
+uniform sampler2D noiseTexture;
+
 // add time for noise
 uniform float time;
 // and take xyz pos from vertex shader
@@ -56,6 +58,10 @@ void main() {
 
     vec3 diffuse = color;
 
+    vec4 texel = texture2D(noiseTexture, pos.xy / 8.0);
+
+    gl_FragColor = texel;
+
     // === lambert shader code ===
 
     #include <clipping_planes_fragment>
@@ -93,7 +99,7 @@ void main() {
     #include <normal_flip>
     #include <envmap_fragment>
 
-    gl_FragColor = vec4( outgoingLight, diffuseColor.a );
+    /* gl_FragColor = vec4( outgoingLight, diffuseColor.a ); */
 
     #include <premultiplied_alpha_fragment>
     #include <tonemapping_fragment>
