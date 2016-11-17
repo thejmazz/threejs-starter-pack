@@ -8,6 +8,8 @@ varying vec3 vLightFront;
 // send xyz position to fragment shader
 varying vec3 pos;
 
+varying vec2 vUv;
+
 #include <common>
 #include <uv_pars_vertex>
 #include <uv2_pars_vertex>
@@ -23,6 +25,7 @@ varying vec3 pos;
 
 void main() {
     pos = position;
+    vUv = uv;
 
     #include <uv_vertex>
     #include <uv2_vertex>

@@ -4,6 +4,7 @@ const glslify = require('glslify')
 
 const loader = new THREE.OBJLoader()
 const jsonLoader = new THREE.JSONLoader()
+const textureLoader = new THREE.TextureLoader()
 
 const { scene, camera, renderer } = createScene({
   clearColor: 0x3C4248
@@ -12,7 +13,8 @@ renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
 window.scene = scene
 
-camera.position.set(0,4,4)
+// camera.position.set(0,4,4)
+camera.position.set(0,0,2)
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement)
 
@@ -144,6 +146,17 @@ const noiseMaterial = new THREE.ShaderMaterial({
   lights: true
 })
 
+const baboonMaterial = new THREE.ShaderMaterial({
+  uniforms: Object.assign({}, THREE.ShaderLib.lambert.uniforms, {
+    time: { type: 'f', value: 0.0, step: 0.03 },
+    // noiseTexture: { type: 't', value: noiseTexture }
+    noiseTexture: { type: 't', value: textureLoader.load('textures/baboon.png') }
+  }),
+  vertexShader: glslify('./shaders/cmo-vert.glsl'),
+  fragmentShader: glslify('./shaders/pyramid-frag.glsl'),
+  lights: true
+})
+
 const noiseSmoothMaterial = new THREE.ShaderMaterial({
   uniforms: Object.assign({}, THREE.ShaderLib.lambert.uniforms, {
     time: { type: 'f', value: 0.0, step: 0.03 },
@@ -154,14 +167,17 @@ const noiseSmoothMaterial = new THREE.ShaderMaterial({
   lights: true
 })
 
+const screenGeometry = new THREE.PlaneGeometry(1, 1, 1, 1)
+console.log(screenGeometry)
+
 const screen = new THREE.Mesh(
-  new THREE.PlaneGeometry(1, 1, 1, 1),
-  noiseMaterial
+  screenGeometry,
+  baboonMaterial
 )
 scene.add(screen)
 
 const screen2 = new THREE.Mesh(
-  new THREE.PlaneGeometry(1, 1, 1, 1),
+  screenGeometry,
   noiseSmoothMaterial
 )
 screen2.position.set(2, 0, 0)
