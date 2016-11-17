@@ -146,11 +146,13 @@ const noiseMaterial = new THREE.ShaderMaterial({
   lights: true
 })
 
+const baboonTexture = textureLoader.load('textures/baboon.png')
+
 const baboonMaterial = new THREE.ShaderMaterial({
   uniforms: Object.assign({}, THREE.ShaderLib.lambert.uniforms, {
     time: { type: 'f', value: 0.0, step: 0.03 },
     // noiseTexture: { type: 't', value: noiseTexture }
-    noiseTexture: { type: 't', value: textureLoader.load('textures/baboon.png') }
+    noiseTexture: { type: 't', value: baboonTexture }
   }),
   vertexShader: glslify('./shaders/cmo-vert.glsl'),
   fragmentShader: glslify('./shaders/pyramid-frag.glsl'),
@@ -160,7 +162,8 @@ const baboonMaterial = new THREE.ShaderMaterial({
 const noiseSmoothMaterial = new THREE.ShaderMaterial({
   uniforms: Object.assign({}, THREE.ShaderLib.lambert.uniforms, {
     time: { type: 'f', value: 0.0, step: 0.03 },
-    noiseTexture: { type: 't', value: noiseTexture }
+    // noiseTexture: { type: 't', value: noiseTexture }
+    noiseTexture: { type: 't', value: baboonTexture }
   }),
   vertexShader: glslify('./shaders/cmo-vert.glsl'),
   fragmentShader: glslify('./shaders/pyramid-frag-smooth.glsl'),
@@ -174,13 +177,14 @@ const screen = new THREE.Mesh(
   screenGeometry,
   baboonMaterial
 )
+screen.position.set(-1, 0, 0)
 scene.add(screen)
 
 const screen2 = new THREE.Mesh(
   screenGeometry,
   noiseSmoothMaterial
 )
-screen2.position.set(2, 0, 0)
+screen2.position.set(1, 0, 0)
 
 scene.add(screen2)
 

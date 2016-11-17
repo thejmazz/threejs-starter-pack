@@ -112,7 +112,7 @@ void main() {
 
     /* texel = texture2D(noiseTexture, pos.xy / 8.0); */
     /* texel = texture2D(noiseTexture, pos.xy); */
-    texel = texture2D(noiseTexture, vUv.xy);
+    texel = texture2D(noiseTexture, vUv.xy / 4.0);
 
     /* texel = smoothNoise(noiseTexture, pos.xy, 0.15); */
     /* texel = smoothNoise(noiseTexture, pos.xy / 8.0, 1.0); */
