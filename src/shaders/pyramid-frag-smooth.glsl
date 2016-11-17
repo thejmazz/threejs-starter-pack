@@ -108,9 +108,9 @@ void main() {
 
     vec4 texel;
 
-    texel = texture2D(noiseTexture, pos.xy / 8.0);
+    /* texel = texture2D(noiseTexture, pos.xy / 8.0); */
 
-    /* texel = smoothNoise(noiseTexture, pos.xy, 0.15); */
+    texel = smoothNoise(noiseTexture, pos.xy, 0.15);
     /* texel = smoothNoise(noiseTexture, pos.xy / 8.0, 1.0); */
 
     /* texel = vec4(vec3(sin(pos.x * 0.01)), 1.0); */

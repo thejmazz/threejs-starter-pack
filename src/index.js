@@ -132,12 +132,42 @@ const pyramid = new THREE.Mesh(
 pyramid.position.set(0, 0.5, 0)
 // scene.add(pyramid)
 
+const noiseTexture = noiseTextureMonochrome(256)
+
+const noiseMaterial = new THREE.ShaderMaterial({
+  uniforms: Object.assign({}, THREE.ShaderLib.lambert.uniforms, {
+    time: { type: 'f', value: 0.0, step: 0.03 },
+    noiseTexture: { type: 't', value: noiseTexture }
+  }),
+  vertexShader: glslify('./shaders/cmo-vert.glsl'),
+  fragmentShader: glslify('./shaders/pyramid-frag.glsl'),
+  lights: true
+})
+
+const noiseSmoothMaterial = new THREE.ShaderMaterial({
+  uniforms: Object.assign({}, THREE.ShaderLib.lambert.uniforms, {
+    time: { type: 'f', value: 0.0, step: 0.03 },
+    noiseTexture: { type: 't', value: noiseTexture }
+  }),
+  vertexShader: glslify('./shaders/cmo-vert.glsl'),
+  fragmentShader: glslify('./shaders/pyramid-frag-smooth.glsl'),
+  lights: true
+})
+
 const screen = new THREE.Mesh(
   new THREE.PlaneGeometry(1, 1, 1, 1),
-  pyramidMaterial
+  noiseMaterial
 )
-
 scene.add(screen)
+
+const screen2 = new THREE.Mesh(
+  new THREE.PlaneGeometry(1, 1, 1, 1),
+  noiseSmoothMaterial
+)
+screen2.position.set(2, 0, 0)
+
+scene.add(screen2)
+
 
 
 // === LOOP ===
