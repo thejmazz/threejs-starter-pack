@@ -41,6 +41,54 @@ varying vec3 vLightFront;
 #include <logdepthbuf_pars_fragment>
 #include <clipping_planes_pars_fragment>
 
+int noiseWidth = 256;
+
+/* vec4 smoothNoise(sampler2D texture, vec2 uv, float texScale) { */
+/*     float fx = fract(uv.x); */
+/*     float fy = fract(uv.y); */
+
+/*     float a = int(uv.x); */
+
+/*     /1* float x1 = mod(int(uv.x) + noiseWidth, noiseWidth); *1/ */
+
+
+/*     return texture2D(texture, uv.xy * texScale); */
+/* } */
+
+vec4 smoothNoise(sampler2D texture, vec2 uv, float texscale) {
+    float t = 0.1;
+    float s = 0.5;
+
+    uv *= texscale;
+
+    vec4 x = mix(
+        texture2D(noiseTexture, vec2(uv.x - t, uv.y)),
+        texture2D(noiseTexture, vec2(uv.x + t, uv.y)),
+        t
+    );
+
+    vec4 y = mix(
+        texture2D(noiseTexture, vec2(uv.x, uv.y - t)),
+        texture2D(noiseTexture, vec2(uv.x, uv.y + t)),
+        t
+    );
+
+    vec4 sum;
+
+    sum = mix(x, y, s);
+
+    /* vec4 sum = mix( */
+    /*         texture2D(noiseTexture, uv * texscale + t), */
+    /*         texture2D(noiseTexture, uv * texscale - t), */
+    /*         0.1 */
+    /*         ); */
+
+    /* sum += texture2D(noiseTexture, uv * texscale + t); */
+    /* sum += texture2D(noiseTexture, uv * texscale - t); */
+
+    return sum;
+}
+
 void main() {
     vec3 color;
 
@@ -58,9 +106,17 @@ void main() {
 
     vec3 diffuse = color;
 
-    vec4 texel = texture2D(noiseTexture, pos.xy / 8.0);
+    vec4 texel;
+
+    /* texel = texture2D(noiseTexture, pos.xy / 8.0); */
+
+    texel = smoothNoise(noiseTexture, pos.xy, 0.15);
+    /* texel = smoothNoise(noiseTexture, pos.xy / 8.0, 1.0); */
+
+    /* texel = vec4(vec3(sin(pos.x * 0.01)), 1.0); */
 
     gl_FragColor = texel;
+    /* gl_FragColor = vec4(pos * 20.0, 1.0); */
 
     // === lambert shader code ===
 
