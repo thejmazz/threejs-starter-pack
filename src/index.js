@@ -151,24 +151,49 @@ const baboonTexture = textureLoader.load('textures/baboon.png')
 const baboonMaterial = new THREE.ShaderMaterial({
   uniforms: Object.assign({}, THREE.ShaderLib.lambert.uniforms, {
     time: { type: 'f', value: 0.0, step: 0.03 },
-    // noiseTexture: { type: 't', value: noiseTexture }
-    noiseTexture: { type: 't', value: baboonTexture }
+    noiseTexture: { type: 't', value: noiseTexture }
+    // noiseTexture: { type: 't', value: baboonTexture }
   }),
   vertexShader: glslify('./shaders/cmo-vert.glsl'),
   fragmentShader: glslify('./shaders/pyramid-frag.glsl'),
   lights: true
 })
 
+function params () {
+  this.t = 0.1
+  this.weightX = 0.5
+  this.weightY = 0.5
+  this.s = 0.5
+}
+
+const p = new params()
+
+
 const noiseSmoothMaterial = new THREE.ShaderMaterial({
   uniforms: Object.assign({}, THREE.ShaderLib.lambert.uniforms, {
     time: { type: 'f', value: 0.0, step: 0.03 },
-    // noiseTexture: { type: 't', value: noiseTexture }
-    noiseTexture: { type: 't', value: baboonTexture }
+    t: { type: 'f', value: p.t },
+    weightX: { type: 'f', value: p.weightX },
+    weightY: { type: 'f', value: p.weightY },
+    s: { type: 'f', value: p.s },
+    noiseTexture: { type: 't', value: noiseTexture }
+    // noiseTexture: { type: 't', value: baboonTexture }
   }),
   vertexShader: glslify('./shaders/cmo-vert.glsl'),
   fragmentShader: glslify('./shaders/pyramid-frag-smooth.glsl'),
   lights: true
 })
+
+const gui = new dat.GUI()
+const tChange = gui.add(p, 't', 0, 1, 0.01)
+const weightXChange = gui.add(p, 'weightX', 0, 1, 0.01)
+const weightYChange = gui.add(p, 'weightY', 0, 1, 0.01)
+const sChange = gui.add(p, 's', 0, 1, 0.01)
+
+tChange.onChange(t => noiseSmoothMaterial.uniforms.t.value = t)
+weightXChange.onChange(weightX => noiseSmoothMaterial.uniforms.weightX.value = weightX)
+weightYChange.onChange(weightY => noiseSmoothMaterial.uniforms.weightY.value = weightY)
+sChange.onChange(s => noiseSmoothMaterial.uniforms.s.value = s)
 
 const screenGeometry = new THREE.PlaneGeometry(1, 1, 1, 1)
 console.log(screenGeometry)

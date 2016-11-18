@@ -9,6 +9,10 @@ uniform vec3 emissive;
 uniform float opacity;
 
 uniform sampler2D noiseTexture;
+uniform float t;
+uniform float weightX;
+uniform float weightY;
+uniform float s;
 
 // add time for noise
 uniform float time;
@@ -91,6 +95,18 @@ vec4 smoothNoise(sampler2D texture, vec2 uv, float texscale) {
     return sum;
 }
 
+vec4 smoothy (sampler2D texture, vec2 uv) {
+    /* vec2 weight = fract(uv); */
+    /* float t = 0.1; */
+    /* float s = 0.1; */
+    /* vec2 weight = vec2(0.5, 0.5); */
+
+    vec4 bottom = mix(texture2D(texture, uv), texture2D(texture, uv + vec2(t, 0)), weightX);
+    vec4 top = mix(texture2D(texture, uv), texture2D(texture, uv + vec2(0, t)), weightY);
+
+    return mix(bottom, top, s);
+}
+
 void main() {
     vec3 color;
 
@@ -115,7 +131,10 @@ void main() {
     /* texel = smoothNoise(noiseTexture, pos.xy, 0.15); */
     /* texel = smoothNoise(noiseTexture, vUv.xy, 1.0); */
     /* texel = texture2D(noiseTexture, vUv.xy); */
-    texel = smoothNoise(noiseTexture, vUv.xy / 4.0, 1.0);
+    /* texel = smoothNoise(noiseTexture, vUv.xy / 4.0, 1.0); */
+    /* texel = smoothNoise(noiseTexture, vUv.xy / 8.0, 1.0); */
+
+    texel = smoothy(noiseTexture, vUv.xy / 8.0);
 
     /* texel = vec4(vec3(sin(pos.x * 0.01)), 1.0); */
 
