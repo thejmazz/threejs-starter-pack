@@ -50,65 +50,7 @@ varying vec3 vLightFront;
 
 int noiseWidth = 256;
 
-/* vec4 smoothNoise(sampler2D texture, vec2 uv, float texScale) { */
-/*     float fx = fract(uv.x); */
-/*     float fy = fract(uv.y); */
-
-/*     float a = int(uv.x); */
-
-/*     /1* float x1 = mod(int(uv.x) + noiseWidth, noiseWidth); *1/ */
-
-
-/*     return texture2D(texture, uv.xy * texScale); */
-/* } */
-
-vec4 smoothNoise(sampler2D texture, vec2 uv, float texscale) {
-    float t = 0.1;
-    float s = 0.5;
-
-    uv *= texscale;
-
-    vec4 x = mix(
-        texture2D(noiseTexture, vec2(uv.x - t, uv.y)),
-        texture2D(noiseTexture, vec2(uv.x + t, uv.y)),
-        t
-    );
-
-    vec4 y = mix(
-        texture2D(noiseTexture, vec2(uv.x, uv.y - t)),
-        texture2D(noiseTexture, vec2(uv.x, uv.y + t)),
-        t
-    );
-
-    vec4 sum;
-
-    sum = mix(x, y, s);
-
-    /* vec4 sum = mix( */
-    /*         texture2D(noiseTexture, uv * texscale + t), */
-    /*         texture2D(noiseTexture, uv * texscale - t), */
-    /*         0.1 */
-    /*         ); */
-
-    /* sum += texture2D(noiseTexture, uv * texscale + t); */
-    /* sum += texture2D(noiseTexture, uv * texscale - t); */
-
-    return sum;
-}
-
-vec4 smoothy (sampler2D texture, vec2 uv) {
-    /* vec2 weight = fract(uv); */
-    /* float t = 0.1; */
-    /* float s = 0.1; */
-    /* vec2 weight = vec2(0.5, 0.5); */
-
-    vec4 bottom = mix(texture2D(texture, uv - vec2(t/2.0, 0)), texture2D(texture, uv + vec2(t/2.0, 0)), weightX);
-    vec4 top = mix(texture2D(texture, uv - vec2(t/2.0, 0)), texture2D(texture, uv + vec2(0, t/2.0)), weightY);
-
-    return mix(bottom, top, s);
-}
-
-vec4 smoothy2 (sampler2D texture, float texSize, vec2 uv) {
+vec4 smoothy (sampler2D texture, float texSize, vec2 uv) {
     uv = uv * texSize - 0.5;
 
     float x = floor(uv.x);
@@ -134,40 +76,14 @@ vec2 zoomUV (vec2 uv, float zoomLevel) {
 }
 
 void main() {
-    vec3 color;
-
-    vec3 green = vec3(0.72, 0.88, 0.23);
-    vec3 blue = vec3(46.0 / 255.0, 190.0 / 255.0, 245.0 / 255.0);
-
-    float noise = snoise3(vec3(pos*16.0 + time * 0.05));
-    float baseNoise = snoise4(vec4(pos * 0.5, time * 0.25)) * 0.25;
-
-    if (noise > 0.5) {
-        color = blue;
-    } else {
-        color = vec3(baseNoise) + green;
-    }
-
-    vec3 diffuse = color;
-
+    vec3 diffuse;
     vec4 texel;
 
-    /* texel = texture2D(noiseTexture, pos.xy / 8.0); */
+    /* texel = smoothy(noiseTexture, 512.0, zoomUV(vUv, zoom)); */
 
-    /* texel = smoothNoise(noiseTexture, pos.xy, 0.15); */
-    /* texel = smoothNoise(noiseTexture, vUv.xy, 1.0); */
-    /* texel = texture2D(noiseTexture, vUv.xy); */
-    /* texel = smoothNoise(noiseTexture, vUv.xy / 4.0, 1.0); */
-    /* texel = smoothNoise(noiseTexture, vUv.xy / 8.0, 1.0); */
-
-    /* texel = smoothy(noiseTexture, vUv.xy / 8.0); */
-    /* texel = smoothy(noiseTexture, zoomUV(vUv, zoom)); */
-    texel = smoothy2(noiseTexture, 512.0, zoomUV(vUv, zoom));
-
-    /* texel = vec4(vec3(sin(pos.x * 0.01)), 1.0); */
+    texel = smoothy(noiseTexture, 256.0, zoomUV(vUv, zoom));
 
     gl_FragColor = texel;
-    /* gl_FragColor = vec4(pos * 20.0, 1.0); */
 
     // === lambert shader code ===
 
