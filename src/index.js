@@ -160,8 +160,8 @@ const baboonTexture = textureLoader.load('textures/baboon.png')
 const baboonMaterial = new THREE.ShaderMaterial({
   uniforms: Object.assign({}, THREE.ShaderLib.lambert.uniforms, {
     time: { type: 'f', value: 0.0, step: 0.03 },
-    // noiseTexture: { type: 't', value: noiseTexture }
-    noiseTexture: { type: 't', value: baboonTexture },
+    noiseTexture: { type: 't', value: noiseTexture },
+    // noiseTexture: { type: 't', value: baboonTexture },
     zoom: { type: 'f', value: p.zoom }
   }),
   vertexShader: glslify('./shaders/cmo-vert.glsl'),
@@ -176,8 +176,9 @@ const noiseSmoothMaterial = new THREE.ShaderMaterial({
     weightX: { type: 'f', value: p.weightX },
     weightY: { type: 'f', value: p.weightY },
     s: { type: 'f', value: p.s },
-    // noiseTexture: { type: 't', value: noiseTexture }
-    noiseTexture: { type: 't', value: baboonTexture }
+    noiseTexture: { type: 't', value: noiseTexture },
+    // noiseTexture: { type: 't', value: baboonTexture }
+    zoom: { type: 'f', value: p.zoom }
   }),
   vertexShader: glslify('./shaders/cmo-vert.glsl'),
   fragmentShader: glslify('./shaders/pyramid-frag-smooth.glsl'),
@@ -196,7 +197,10 @@ weightXChange.onChange(weightX => noiseSmoothMaterial.uniforms.weightX.value = w
 weightYChange.onChange(weightY => noiseSmoothMaterial.uniforms.weightY.value = weightY)
 sChange.onChange(s => noiseSmoothMaterial.uniforms.s.value = s)
 
-zoomChange.onChange(zoom => baboonMaterial.uniforms.zoom.value = zoom)
+zoomChange.onChange((zoom) => {
+  baboonMaterial.uniforms.zoom.value = zoom
+  noiseSmoothMaterial.uniforms.zoom.value = zoom
+})
 
 const screenGeometry = new THREE.PlaneGeometry(1, 1, 1, 1)
 console.log(screenGeometry)

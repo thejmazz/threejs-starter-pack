@@ -7,6 +7,7 @@
 /* uniform vec3 diffuse; */
 uniform vec3 emissive;
 uniform float opacity;
+uniform float zoom;
 
 uniform sampler2D noiseTexture;
 uniform float t;
@@ -107,6 +108,10 @@ vec4 smoothy (sampler2D texture, vec2 uv) {
     return mix(bottom, top, s);
 }
 
+vec2 zoomUV (vec2 uv, float zoomLevel) {
+    return uv * zoomLevel + (1.0 - zoomLevel) / 2.0;
+}
+
 void main() {
     vec3 color;
 
@@ -134,7 +139,8 @@ void main() {
     /* texel = smoothNoise(noiseTexture, vUv.xy / 4.0, 1.0); */
     /* texel = smoothNoise(noiseTexture, vUv.xy / 8.0, 1.0); */
 
-    texel = smoothy(noiseTexture, vUv.xy / 8.0);
+    /* texel = smoothy(noiseTexture, vUv.xy / 8.0); */
+    texel = smoothy(noiseTexture, zoomUV(vUv, zoom));
 
     /* texel = vec4(vec3(sin(pos.x * 0.01)), 1.0); */
 
