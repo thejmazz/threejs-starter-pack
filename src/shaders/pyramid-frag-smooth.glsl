@@ -102,10 +102,31 @@ vec4 smoothy (sampler2D texture, vec2 uv) {
     /* float s = 0.1; */
     /* vec2 weight = vec2(0.5, 0.5); */
 
-    vec4 bottom = mix(texture2D(texture, uv), texture2D(texture, uv + vec2(t, 0)), weightX);
-    vec4 top = mix(texture2D(texture, uv), texture2D(texture, uv + vec2(0, t)), weightY);
+    vec4 bottom = mix(texture2D(texture, uv - vec2(t/2.0, 0)), texture2D(texture, uv + vec2(t/2.0, 0)), weightX);
+    vec4 top = mix(texture2D(texture, uv - vec2(t/2.0, 0)), texture2D(texture, uv + vec2(0, t/2.0)), weightY);
 
     return mix(bottom, top, s);
+}
+
+vec4 smoothy2 (sampler2D texture, float texSize, vec2 uv) {
+    uv = uv * texSize - 0.5;
+
+    float x = floor(uv.x);
+    float y = floor(uv.y);
+
+    float dx = uv.x - x;
+    float dy = uv.y - y;
+    float omdx = 1.0 - dx;
+    float omdy = 1.0 - dy;
+
+    vec4 sum;
+
+    sum = omdx * omdy * texture2D(texture, vec2(x, y) / texSize) +
+        omdx * dy * texture2D(texture, vec2(x, y + 1.0) / texSize) +
+        dx * omdy * texture2D(texture, vec2(x + 1.0, y) / texSize) +
+        dx * dy * texture2D(texture, vec2(x + 1.0, y + 1.0) / texSize);
+
+    return sum;
 }
 
 vec2 zoomUV (vec2 uv, float zoomLevel) {
@@ -140,7 +161,8 @@ void main() {
     /* texel = smoothNoise(noiseTexture, vUv.xy / 8.0, 1.0); */
 
     /* texel = smoothy(noiseTexture, vUv.xy / 8.0); */
-    texel = smoothy(noiseTexture, zoomUV(vUv, zoom));
+    /* texel = smoothy(noiseTexture, zoomUV(vUv, zoom)); */
+    texel = smoothy2(noiseTexture, 512.0, zoomUV(vUv, zoom));
 
     /* texel = vec4(vec3(sin(pos.x * 0.01)), 1.0); */
 
