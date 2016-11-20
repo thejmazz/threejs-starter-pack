@@ -2,6 +2,7 @@
 #pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
 #pragma glslify: snoise4 = require(glsl-noise/simplex/4d)
 #pragma glslify: snoise2 = require(glsl-noise/simplex/2d)
+#pragma glslify: hsl2rgb = require(glsl-hsl2rgb)
 
 // we gonna hijack diffuse
 /* uniform vec3 diffuse; */
@@ -128,7 +129,14 @@ void main() {
     /* texel = smoothy(noiseTexture, 256.0, zoomUV(vUv, zoomba)); */
 
     /* gl_FragColor = texel; */
-    gl_FragColor = turbulence(vUv, size, isSmooth);
+
+    vec4 turb = turbulence(vUv, size, isSmooth);
+    float lightness = 192. + (turb.r * 255.) / 4.;
+    lightness /= 255.;
+    vec3 color = hsl2rgb(169./255., 255./255., lightness);
+
+    /* gl_FragColor = turbulence(vUv, size, isSmooth); */
+    gl_FragColor = vec4(color, 1.0);
 
     // === lambert shader code ===
 
