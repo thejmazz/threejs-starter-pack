@@ -15,6 +15,9 @@ uniform float weightX;
 uniform float weightY;
 uniform float s;
 
+uniform float size;
+uniform bool isSmooth;
+
 // add time for noise
 uniform float time;
 // and take xyz pos from vertex shader
@@ -75,16 +78,32 @@ vec2 zoomUV (vec2 uv, float zoomLevel) {
     return uv * zoomLevel + (1.0 - zoomLevel) / 2.0;
 }
 
-vec4 turbulence (vec2 uv, float size) {
-    vec4 sum;
+
+/**
+  * size is x^2
+  */
+vec4 turbulence (vec2 uv, float size, bool isSmooth) {
+    vec4 sum = vec4(0);
     float initialSize = size;
 
-    while (size >= 1.0) {
-        sum += smoothy(noiseTexture, 256.0, zoomUV(uv, 1.0 / size)) * size;
+    int iterations = int(log2(size));
+    for (int i = 0; i < 100; i++) {
+        if (isSmooth) {
+            sum += smoothy(noiseTexture, 256.0, zoomUV(uv, 1.0 / size)) * size;
+        } else {
+            sum += texture2D(noiseTexture, zoomUV(uv, 1.0 / size)) * size;
+        }
         size /= 2.0;
+
+        if (i == iterations) break;
     }
 
-    return sum / initialSize;
+    /* while (size >= 1.0) { */
+    /*     sum += smoothy(noiseTexture, 256.0, zoomUV(uv, 1.0 / size)) * size; */
+    /*     size /= 2.0; */
+    /* } */
+
+    return sum / ( 2. * initialSize );
 }
 
 void main() {
@@ -108,8 +127,8 @@ void main() {
 
     /* texel = smoothy(noiseTexture, 256.0, zoomUV(vUv, zoomba)); */
 
-    gl_FragColor = texel;
-    /* gl_FragColor = turbulence(vUv, 16.0); */
+    /* gl_FragColor = texel; */
+    gl_FragColor = turbulence(vUv, size, isSmooth);
 
     // === lambert shader code ===
 

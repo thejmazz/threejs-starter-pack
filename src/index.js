@@ -154,6 +154,10 @@ function params () {
 
   this.baboon = false
   this.zoom = 0.15
+
+  this.turbulenceSize = 16
+  this.refreshNoise = refreshNoise
+  this.smooth = true
 }
 
 const p = new params()
@@ -183,12 +187,20 @@ const noiseSmoothMaterial = new THREE.ShaderMaterial({
     // noiseTexture: { type: 't', value: noiseTexture },
     // noiseTexture: { type: 't', value: baboonTexture },
     noiseTexture: { type: 't', value: p.baboon ? baboonTexture : noiseTexture },
-    zoom: { type: 'f', value: p.zoom }
+    zoom: { type: 'f', value: p.zoom },
+    size: { type: 'f', value: p.turbulenceSize },
+    isSmooth: { type: 'b', value: p.smooth }
   }),
   vertexShader: glslify('./shaders/cmo-vert.glsl'),
   fragmentShader: glslify('./shaders/pyramid-frag-smooth.glsl'),
   lights: true
 })
+
+function refreshNoise() {
+  const newNoiseTexture = noiseTextureMonochrome(256)
+  noiseSmoothMaterial.uniforms.noiseTexture.value = newNoiseTexture;
+  baboonMaterial.uniforms.noiseTexture.value = newNoiseTexture;
+}
 
 const gui = new dat.GUI()
 // const tChange = gui.add(p, 't', 0, 1, 0.01)
@@ -196,7 +208,10 @@ const gui = new dat.GUI()
 // const weightYChange = gui.add(p, 'weightY', 0, 1, 0.01)
 // const sChange = gui.add(p, 's', 0, 1, 0.01)
 const zoomChange = gui.add(p, 'zoom', 0, 1, 0.01)
-const baboonChange = gui.add(p, 'baboon')
+// const baboonChange = gui.add(p, 'baboon')
+const sizeChange = gui.add(p, 'turbulenceSize', 0, 256, 1)
+const smoothChange = gui.add(p, 'smooth')
+gui.add(p, 'refreshNoise')
 
 // tChange.onChange(t => noiseSmoothMaterial.uniforms.t.value = t)
 // weightXChange.onChange(weightX => noiseSmoothMaterial.uniforms.weightX.value = weightX)
@@ -207,10 +222,12 @@ zoomChange.onChange((zoom) => {
   baboonMaterial.uniforms.zoom.value = zoom
   noiseSmoothMaterial.uniforms.zoom.value = zoom
 })
-baboonChange.onChange(c => {
-  baboonMaterial.uniforms.noiseTexture.value = c ? baboonTexture : noiseTexture
-  noiseSmoothMaterial.uniforms.noiseTexture.value = c ? baboonTexture : noiseTexture
-})
+// baboonChange.onChange(c => {
+//   baboonMaterial.uniforms.noiseTexture.value = c ? baboonTexture : noiseTexture
+//   noiseSmoothMaterial.uniforms.noiseTexture.value = c ? baboonTexture : noiseTexture
+// })
+sizeChange.onChange(size => noiseSmoothMaterial.uniforms.size.value = size)
+smoothChange.onChange(isSmooth => noiseSmoothMaterial.uniforms.isSmooth.value = isSmooth)
 
 const screenGeometry = new THREE.PlaneGeometry(1, 1, 1, 1)
 console.log(screenGeometry)
