@@ -75,15 +75,41 @@ vec2 zoomUV (vec2 uv, float zoomLevel) {
     return uv * zoomLevel + (1.0 - zoomLevel) / 2.0;
 }
 
+vec4 turbulence (vec2 uv, float size) {
+    vec4 sum;
+    float initialSize = size;
+
+    while (size >= 1.0) {
+        sum += smoothy(noiseTexture, 256.0, zoomUV(uv, 1.0 / size)) * size;
+        size /= 2.0;
+    }
+
+    return sum / initialSize;
+}
+
 void main() {
     vec3 diffuse;
     vec4 texel;
 
     /* texel = smoothy(noiseTexture, 512.0, zoomUV(vUv, zoom)); */
 
-    texel = smoothy(noiseTexture, 256.0, zoomUV(vUv, zoom));
+    float z = 8.0;
+    float zoomba = 1.0 / z;
+
+    vec4 t1 = smoothy(noiseTexture, 256.0, zoomUV(vUv, 1.0 / 16.0)) * 16.0;
+    vec4 t2 = smoothy(noiseTexture, 256.0, zoomUV(vUv, 1.0 / 8.0)) * 8.0;
+    vec4 t3 = smoothy(noiseTexture, 256.0, zoomUV(vUv, 1.0 / 4.0)) * 4.0;
+    vec4 t4 = smoothy(noiseTexture, 256.0, zoomUV(vUv, 1.0 / 2.0)) * 2.0;
+    vec4 t5 = smoothy(noiseTexture, 256.0, zoomUV(vUv, 1.0 / 1.0)) * 1.0;
+    vec4 tSum = t1 + t2 + t3 + t4 + t5;
+    tSum /= 32.0;
+
+    texel = tSum;
+
+    /* texel = smoothy(noiseTexture, 256.0, zoomUV(vUv, zoomba)); */
 
     gl_FragColor = texel;
+    /* gl_FragColor = turbulence(vUv, 16.0); */
 
     // === lambert shader code ===
 
