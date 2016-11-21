@@ -189,7 +189,8 @@ const noiseSmoothMaterial = new THREE.ShaderMaterial({
     noiseTexture: { type: 't', value: p.baboon ? baboonTexture : noiseTexture },
     zoom: { type: 'f', value: p.zoom },
     size: { type: 'f', value: p.turbulenceSize },
-    isSmooth: { type: 'b', value: p.smooth }
+    isSmooth: { type: 'b', value: p.smooth },
+    seed: { type: 'f', value: Math.random() }
   }),
   vertexShader: glslify('./shaders/cmo-vert.glsl'),
   fragmentShader: glslify('./shaders/pyramid-frag-smooth.glsl'),
@@ -197,9 +198,11 @@ const noiseSmoothMaterial = new THREE.ShaderMaterial({
 })
 
 function refreshNoise() {
-  const newNoiseTexture = noiseTextureMonochrome(256)
-  noiseSmoothMaterial.uniforms.noiseTexture.value = newNoiseTexture;
-  baboonMaterial.uniforms.noiseTexture.value = newNoiseTexture;
+  // const newNoiseTexture = noiseTextureMonochrome(256)
+  // noiseSmoothMaterial.uniforms.noiseTexture.value = newNoiseTexture;
+  // baboonMaterial.uniforms.noiseTexture.value = newNoiseTexture;
+
+  noiseSmoothMaterial.uniforms.seed.value = Math.random()
 }
 
 const gui = new dat.GUI()
@@ -252,7 +255,7 @@ scene.add(screen2)
 // === LOOP ===
 
 const update = (ts, delta) => {
-  pyramidMaterial.uniforms.time.value += pyramidMaterial.uniforms.time.step
+  noiseSmoothMaterial.uniforms.time.value += pyramidMaterial.uniforms.time.step
 
   // pyramid.rotation.y += delta * Math.PI / 16
 }

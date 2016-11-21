@@ -33,6 +33,7 @@
   "dependencies": {
     "glsl-hsl2rgb": "^1.1.0",
     "glsl-noise": "^0.0.0",
+    "glsl-random": "^0.0.5",
     "stats.js": "^0.17.0"
   }
 }

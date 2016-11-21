@@ -3,6 +3,7 @@
 #pragma glslify: snoise4 = require(glsl-noise/simplex/4d)
 #pragma glslify: snoise2 = require(glsl-noise/simplex/2d)
 #pragma glslify: hsl2rgb = require(glsl-hsl2rgb)
+#pragma glslify: random = require(glsl-random)
 
 // we gonna hijack diffuse
 /* uniform vec3 diffuse; */
@@ -15,6 +16,7 @@ uniform float t;
 uniform float weightX;
 uniform float weightY;
 uniform float s;
+uniform float seed;
 
 uniform float size;
 uniform bool isSmooth;
@@ -65,14 +67,27 @@ vec4 smoothy (sampler2D texture, float texSize, vec2 uv) {
     float omdx = 1.0 - dx;
     float omdy = 1.0 - dy;
 
-    vec4 sum;
+    /* vec4 sum; */
 
-    sum = omdx * omdy * texture2D(texture, vec2(x, y) / texSize) +
-        omdx * dy * texture2D(texture, vec2(x, y + 1.0) / texSize) +
-        dx * omdy * texture2D(texture, vec2(x + 1.0, y) / texSize) +
-        dx * dy * texture2D(texture, vec2(x + 1.0, y + 1.0) / texSize);
+    /* sum = omdx * omdy * texture2D(texture, vec2(x, y) / texSize) + */
+    /*     omdx * dy * texture2D(texture, vec2(x, y + 1.0) / texSize) + */
+    /*     dx * omdy * texture2D(texture, vec2(x + 1.0, y) / texSize) + */
+    /*     dx * dy * texture2D(texture, vec2(x + 1.0, y + 1.0) / texSize); */
 
-    return sum;
+    /* return sum; */
+
+    /* float t = time * 0.0001; */
+    vec2 t = vec2(time * 0.01);
+
+    /* vec2 seed = vec2(12345); */
+    /* float seed = 0.5; */
+
+    float sum = omdx * omdy * random((vec2(x, y) + seed) / texSize) +
+        omdx * dy * random((vec2(x, y + 1.0) + seed) / texSize) +
+        dx * omdy * random((vec2(x + 1.0, y) + seed) / texSize) +
+        dx * dy * random((vec2(x + 1.0, y + 1.0) + seed) / texSize);
+
+    return vec4(sum);
 }
 
 vec2 zoomUV (vec2 uv, float zoomLevel) {
@@ -137,6 +152,8 @@ void main() {
 
     /* gl_FragColor = turbulence(vUv, size, isSmooth); */
     gl_FragColor = vec4(color, 1.0);
+
+    /* gl_FragColor = vec4(vec3(sin((vUv.x + vUv.y) * 128.)), 1.0); */
 
     // === lambert shader code ===
 
