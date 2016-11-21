@@ -82,10 +82,10 @@ vec4 smoothy (sampler2D texture, float texSize, vec2 uv) {
     /* vec2 seed = vec2(12345); */
     /* float seed = 0.5; */
 
-    float sum = omdx * omdy * random((vec2(x, y) + seed) / texSize) +
-        omdx * dy * random((vec2(x, y + 1.0) + seed) / texSize) +
-        dx * omdy * random((vec2(x + 1.0, y) + seed) / texSize) +
-        dx * dy * random((vec2(x + 1.0, y + 1.0) + seed) / texSize);
+    float sum = omdx * omdy * snoise2((vec2(x, y) + seed)) +
+        omdx * dy * snoise2((vec2(x, y + 1.0) + seed)) +
+        dx * omdy * snoise2((vec2(x + 1.0, y) + seed)) +
+        dx * dy * snoise2((vec2(x + 1.0, y + 1.0) + seed));
 
     return vec4(sum);
 }
