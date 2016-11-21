@@ -23,6 +23,8 @@ uniform bool isSmooth;
 
 // add time for noise
 uniform float time;
+uniform float timeFactor;
+uniform float hue;
 // and take xyz pos from vertex shader
 varying vec3 pos;
 
@@ -76,16 +78,15 @@ vec4 smoothy (sampler2D texture, float texSize, vec2 uv) {
 
     /* return sum; */
 
-    /* float t = time * 0.0001; */
-    vec2 t = vec2(time * 0.01);
+    float t = time * timeFactor;
 
     /* vec2 seed = vec2(12345); */
     /* float seed = 0.5; */
 
-    float sum = omdx * omdy * snoise2((vec2(x, y) + seed)) +
-        omdx * dy * snoise2((vec2(x, y + 1.0) + seed)) +
-        dx * omdy * snoise2((vec2(x + 1.0, y) + seed)) +
-        dx * dy * snoise2((vec2(x + 1.0, y + 1.0) + seed));
+    float sum = omdx * omdy * snoise3(vec3((vec2(x, y) + seed), t)) +
+        omdx * dy * snoise3(vec3((vec2(x, y + 1.0) + seed), t)) +
+        dx * omdy * snoise3(vec3((vec2(x + 1.0, y) + seed), t)) +
+        dx * dy * snoise3(vec3((vec2(x + 1.0, y + 1.0) + seed), t));
 
     return vec4(sum);
 }
@@ -113,11 +114,6 @@ vec4 turbulence (vec2 uv, float size, bool isSmooth) {
 
         if (i == iterations) break;
     }
-
-    /* while (size >= 1.0) { */
-    /*     sum += smoothy(noiseTexture, 256.0, zoomUV(uv, 1.0 / size)) * size; */
-    /*     size /= 2.0; */
-    /* } */
 
     return sum / ( 2. * initialSize );
 }
@@ -148,7 +144,8 @@ void main() {
     vec4 turb = turbulence(vUv, size, isSmooth);
     float lightness = 192. + (turb.r * 255.) / 4.;
     lightness /= 255.;
-    vec3 color = hsl2rgb(169./255., 255./255., lightness);
+    /* vec3 color = hsl2rgb(169./255., 255./255., lightness); */
+    vec3 color = hsl2rgb(hue/255., 255./255., lightness);
 
     /* gl_FragColor = turbulence(vUv, size, isSmooth); */
     gl_FragColor = vec4(color, 1.0);

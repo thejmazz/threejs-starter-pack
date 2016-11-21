@@ -14,9 +14,13 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap
 window.scene = scene
 
 // camera.position.set(0,4,4)
-camera.position.set(0,0,2)
+// camera.position.set(0,0,2)
+camera.position.set(0,0.01,0)
+// camera.updateProjectionMatrix()
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement)
+controls.enableZoom = false
+controls.enablePan = false
 
 // === LIGHT ===
 
@@ -158,6 +162,8 @@ function params () {
   this.turbulenceSize = 16
   this.refreshNoise = refreshNoise
   this.smooth = true
+  this.timeFactor = 0.1
+  this.hue = 169
 }
 
 const p = new params()
@@ -190,7 +196,9 @@ const noiseSmoothMaterial = new THREE.ShaderMaterial({
     zoom: { type: 'f', value: p.zoom },
     size: { type: 'f', value: p.turbulenceSize },
     isSmooth: { type: 'b', value: p.smooth },
-    seed: { type: 'f', value: Math.random() }
+    seed: { type: 'f', value: Math.random() },
+    timeFactor: { type: 'f', value: p.timeFactor },
+    hue: { type: 'f', value: p.hue }
   }),
   vertexShader: glslify('./shaders/cmo-vert.glsl'),
   fragmentShader: glslify('./shaders/pyramid-frag-smooth.glsl'),
@@ -210,10 +218,12 @@ const gui = new dat.GUI()
 // const weightXChange = gui.add(p, 'weightX', 0, 1, 0.01)
 // const weightYChange = gui.add(p, 'weightY', 0, 1, 0.01)
 // const sChange = gui.add(p, 's', 0, 1, 0.01)
-const zoomChange = gui.add(p, 'zoom', 0, 1, 0.01)
+// const zoomChange = gui.add(p, 'zoom', 0, 1, 0.01)
 // const baboonChange = gui.add(p, 'baboon')
 const sizeChange = gui.add(p, 'turbulenceSize', 0, 256, 1)
 const smoothChange = gui.add(p, 'smooth')
+const timeFactorChange = gui.add(p, 'timeFactor', 0, 1, 0.1)
+const hueChange = gui.add(p, 'hue', 0, 255, 1)
 gui.add(p, 'refreshNoise')
 
 // tChange.onChange(t => noiseSmoothMaterial.uniforms.t.value = t)
@@ -221,16 +231,18 @@ gui.add(p, 'refreshNoise')
 // weightYChange.onChange(weightY => noiseSmoothMaterial.uniforms.weightY.value = weightY)
 // sChange.onChange(s => noiseSmoothMaterial.uniforms.s.value = s)
 
-zoomChange.onChange((zoom) => {
-  baboonMaterial.uniforms.zoom.value = zoom
-  noiseSmoothMaterial.uniforms.zoom.value = zoom
-})
+// zoomChange.onChange((zoom) => {
+//   baboonMaterial.uniforms.zoom.value = zoom
+//   noiseSmoothMaterial.uniforms.zoom.value = zoom
+// })
 // baboonChange.onChange(c => {
 //   baboonMaterial.uniforms.noiseTexture.value = c ? baboonTexture : noiseTexture
 //   noiseSmoothMaterial.uniforms.noiseTexture.value = c ? baboonTexture : noiseTexture
 // })
 sizeChange.onChange(size => noiseSmoothMaterial.uniforms.size.value = size)
 smoothChange.onChange(isSmooth => noiseSmoothMaterial.uniforms.isSmooth.value = isSmooth)
+timeFactorChange.onChange(timeFactor => noiseSmoothMaterial.uniforms.timeFactor.value = timeFactor)
+hueChange.onChange(hue => noiseSmoothMaterial.uniforms.hue.value = hue)
 
 const screenGeometry = new THREE.PlaneGeometry(1, 1, 1, 1)
 console.log(screenGeometry)
@@ -249,6 +261,20 @@ const screen2 = new THREE.Mesh(
 screen2.position.set(1, 0, 0)
 
 scene.add(screen2)
+
+const skyboxMaterials = [
+  noiseSmoothMaterial,
+  noiseSmoothMaterial,
+  noiseSmoothMaterial,
+  noiseSmoothMaterial,
+  noiseSmoothMaterial,
+  noiseSmoothMaterial
+]
+
+const skyBox = new THREE.Mesh(new THREE.CubeGeometry(1, 1, 1), new THREE.MeshFaceMaterial(skyboxMaterials))
+// invert faces
+skyBox.applyMatrix(new THREE.Matrix4().makeScale(1, 1, -1))
+scene.add(skyBox)
 
 
 
