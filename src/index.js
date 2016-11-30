@@ -14,13 +14,13 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap
 window.scene = scene
 
 // camera.position.set(0,4,4)
-// camera.position.set(0,0,2)
-camera.position.set(0,0.01,0)
+camera.position.set(0,0,2)
+// camera.position.set(0,0.01,0)
 // camera.updateProjectionMatrix()
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement)
-controls.enableZoom = false
-controls.enablePan = false
+// controls.enableZoom = false
+// controls.enablePan = false
 
 // === LIGHT ===
 
@@ -205,6 +205,28 @@ const noiseSmoothMaterial = new THREE.ShaderMaterial({
   lights: true
 })
 
+const marbleMaterial = new THREE.ShaderMaterial({
+  uniforms: Object.assign({}, THREE.ShaderLib.lambert.uniforms, {
+    time: { type: 'f', value: 0.0, step: 0.03 },
+    t: { type: 'f', value: p.t },
+    weightX: { type: 'f', value: p.weightX },
+    weightY: { type: 'f', value: p.weightY },
+    s: { type: 'f', value: p.s },
+    // noiseTexture: { type: 't', value: noiseTexture },
+    // noiseTexture: { type: 't', value: baboonTexture },
+    noiseTexture: { type: 't', value: p.baboon ? baboonTexture : noiseTexture },
+    zoom: { type: 'f', value: p.zoom },
+    size: { type: 'f', value: p.turbulenceSize },
+    isSmooth: { type: 'b', value: p.smooth },
+    seed: { type: 'f', value: Math.random() },
+    timeFactor: { type: 'f', value: p.timeFactor },
+    hue: { type: 'f', value: p.hue }
+  }),
+  vertexShader: glslify('./shaders/cmo-vert.glsl'),
+  fragmentShader: glslify('./shaders/marble.glsl'),
+  lights: true
+})
+
 function refreshNoise() {
   // const newNoiseTexture = noiseTextureMonochrome(256)
   // noiseSmoothMaterial.uniforms.noiseTexture.value = newNoiseTexture;
@@ -260,7 +282,11 @@ const screen2 = new THREE.Mesh(
 )
 screen2.position.set(1, 0, 0)
 
-scene.add(screen2)
+// scene.add(screen2)
+
+const screen3 = new THREE.Mesh(screenGeometry, marbleMaterial)
+screen3.position.set(1, 0, 0)
+scene.add(screen3)
 
 const skyboxMaterials = [
   noiseSmoothMaterial,
@@ -274,7 +300,7 @@ const skyboxMaterials = [
 const skyBox = new THREE.Mesh(new THREE.CubeGeometry(1, 1, 1), new THREE.MeshFaceMaterial(skyboxMaterials))
 // invert faces
 skyBox.applyMatrix(new THREE.Matrix4().makeScale(1, 1, -1))
-scene.add(skyBox)
+// scene.add(skyBox)
 
 
 
