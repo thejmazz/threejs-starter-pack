@@ -14,7 +14,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap
 window.scene = scene
 
 // camera.position.set(0,4,4)
-camera.position.set(0,0,2)
+camera.position.set(0,0,1.3)
 // camera.position.set(0,0.01,0)
 // camera.updateProjectionMatrix()
 

@@ -150,7 +150,38 @@ void main() {
     /* gl_FragColor = turbulence(vUv, size, isSmooth); */
     /* gl_FragColor = vec4(color, 1.0); */
 
-    gl_FragColor = vec4(vec3(sin((vUv.x + vUv.y) * 128.)), 1.0);
+    // multiply x and y by different factors to get different angles
+    // multiple sin value to get different frequencies
+    /* gl_FragColor = vec4(vec3(sin((vUv.x + vUv.y) * 128.)), 1.); */
+    float period = 128.;
+    float xPeriod = period * 1.0;
+    float yPeriod = period * 1.0;
+
+    float turbPower = 16.0;
+    float turbSize = 32.0;
+
+    float xyValue =
+        xPeriod * vUv.x +
+        yPeriod * vUv.y +
+        turbPower * turbulence(vUv, turbSize, isSmooth).r;
+
+    float sinValue = sin(xyValue) * 1.;
+
+    vec4 marbleColor;
+
+    // chunky lines
+    /* if (sinValue < 0.9) { */
+    /*     marbleColor = vec4(1.); */
+    /* } else { */
+    /*     marbleColor = vec4(0.); */
+    /* } */
+
+    // smooth lines
+    marbleColor = vec4(1. - sinValue);
+
+    /* marbleColor = vec4(vec3(sinValue), 1.); */
+
+    gl_FragColor = marbleColor;
 
     // === lambert shader code ===
 
