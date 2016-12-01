@@ -15,19 +15,22 @@ window.scene = scene
 
 // camera.position.set(0,4,4)
 // camera.position.set(0,0,1.3)
-camera.position.set(0,8,12)
+camera.position.set(0,10,30)
 // camera.position.set(0,0.01,0)
 // camera.updateProjectionMatrix()
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement)
+controls.autoRotate = true
+controls.maxDistance = 55
+controls.minDistance = 15
 // controls.enableZoom = false
 // controls.enablePan = false
 
 // === LIGHT ===
 
 const light = new THREE.PointLight(0xffffff, 1, 1000)
-light.position.set(25, 20, 25)
-scene.add(new THREE.PointLightHelper(light))
+light.position.set(15, 20, 15)
+// scene.add(new THREE.PointLightHelper(light))
 scene.add(light)
 
 const spotLight = new THREE.SpotLight(0xffffff)
@@ -71,6 +74,7 @@ const planeMaker = () => {
 
 let plane = planeMaker()
 plane.receiveShadow = true
+// plane.rotation.z = Math.PI / 2
 scene.add(plane)
 
 // === PYRAMID ===
@@ -273,19 +277,31 @@ const screen3 = new THREE.Mesh(screenGeometry, marbleMaterial)
 screen3.position.set(0, 4, 0)
 // scene.add(screen3)
 
+// const skyboxMaterials = [
+//   noiseSmoothMaterial,
+//   noiseSmoothMaterial,
+//   noiseSmoothMaterial,
+//   noiseSmoothMaterial,
+//   noiseSmoothMaterial,
+//   noiseSmoothMaterial
+// ]
+
+const skyMaterial = new THREE.MeshBasicMaterial({ color: 0xE9E9E9, side: THREE.BackSide })
+
 const skyboxMaterials = [
-  noiseSmoothMaterial,
-  noiseSmoothMaterial,
-  noiseSmoothMaterial,
-  noiseSmoothMaterial,
-  noiseSmoothMaterial,
-  noiseSmoothMaterial
+  skyMaterial,
+  skyMaterial,
+  skyMaterial,
+  skyMaterial,
+  skyMaterial,
+  skyMaterial
 ]
 
-const skyBox = new THREE.Mesh(new THREE.CubeGeometry(1, 1, 1), new THREE.MeshFaceMaterial(skyboxMaterials))
+// const skyBox = new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), new THREE.MeshFaceMaterial(skyboxMaterials))
+const skyBox = new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), skyMaterial)
 // invert faces
-skyBox.applyMatrix(new THREE.Matrix4().makeScale(1, 1, -1))
-// scene.add(skyBox)
+// skyBox.applyMatrix(new THREE.Matrix4().makeScale(1, 1, -1))
+scene.add(skyBox)
 
 // === PYRAMID ===
 
@@ -299,13 +315,47 @@ const coneGeometry = ({
   thetaLength = 2 * Math.PI
 } = {}) => new THREE.ConeGeometry(radius, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength)
 
-const pyramid = new THREE.Mesh(
-  coneGeometry({ radius: 5, height: 10 }),
-  marbleMaterial
-)
+const pyramids = [
+  (() => {
+    const p = new THREE.Mesh(coneGeometry({ radius: 10, height: 20 }), marbleMaterial)
+    p.position.set(0, 5, 0)
+    return p
+  })(),
+  (() => {
+    const p = new THREE.Mesh(coneGeometry({ radius: 10, height: 20 }), marbleMaterial)
+    p.position.set(-12, 5, 0)
+    p.rotation.y = Math.PI / 2.5
+    return p
+  })(),
+  (() => {
+    const p = new THREE.Mesh(coneGeometry({ radius: 10, height: 20 }), marbleMaterial)
+    p.position.set(12, 2, -5)
+    p.rotation.y = Math.PI / 0.7
+    return p
+  })(),
+  (() => {
+    const p = new THREE.Mesh(coneGeometry({ radius: 15, height: 30 }), marbleMaterial)
+    p.position.set(0, 7, -15)
+    p.rotation.y = Math.PI / 2.5
+    return p
+  })(),
+  (() => {
+    const p = new THREE.Mesh(coneGeometry({ radius: 15, height: 30 }), marbleMaterial)
+    p.position.set(-15, 8, -17)
+    p.rotation.y = Math.PI * 0.15
+    return p
+  })(),
+  (() => {
+    const p = new THREE.Mesh(coneGeometry({ radius: 15, height: 30 }), marbleMaterial)
+    p.position.set(17, 6, -17)
+    p.rotation.y = Math.PI * - 0.2
+    return p
+  })(),
+]
 
-pyramid.position.set(0, 3, 0)
-scene.add(pyramid)
+// pyramid.position.set(0, 5, 0)
+
+pyramids.forEach(pyramid => scene.add(pyramid))
 
 
 // === LOOP ===
@@ -313,6 +363,10 @@ scene.add(pyramid)
 const update = (ts, delta) => {
   // noiseSmoothMaterial.uniforms.time.value += pyramidMaterial.uniforms.time.step
   planeMaterial.uniforms.time.value += planeMaterial.uniforms.time.step
+  controls.update()
+
+  // camera.rotation.y = delta * 90 * Math.PI / 180
+  // camera.rotation.y = delta *  Math.PI / 16
 
   // pyramid.rotation.y += delta * Math.PI / 16
 }

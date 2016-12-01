@@ -56,7 +56,7 @@ void main() {
     // little fizzles
     sum += snoise4(vec4(position * 0.25, t)) * 1.;
     // big womps
-    sum += snoise4(vec4(position * 0.01, t)) * 4.;
+    sum += snoise4(vec4(position * 0.01, t)) * 2.;
     // medium chubs
     sum += snoise4(vec4(position * 0.1, t)) * 3.;
 
