@@ -153,7 +153,7 @@ void main() {
     // multiply x and y by different factors to get different angles
     // multiple sin value to get different frequencies
     /* gl_FragColor = vec4(vec3(sin((vUv.x + vUv.y) * 128.)), 1.); */
-    float period = 128.;
+    float period = 256.;
     float xPeriod = period * 1.0;
     float yPeriod = period * 1.0;
 
@@ -169,6 +169,9 @@ void main() {
 
     vec4 marbleColor;
 
+    vec4 bg = vec4(vec3(229./255.), 1.);
+    vec4 black = vec4(1.);
+
     // chunky lines
     /* if (sinValue < 0.9) { */
     /*     marbleColor = vec4(1.); */
@@ -177,7 +180,9 @@ void main() {
     /* } */
 
     // smooth lines
-    marbleColor = vec4(1. - sinValue);
+    /* sinValue = clamp(sinValue, 0.9, 1.0); */
+    /* marbleColor = vec4(1. - sinValue); */
+    marbleColor = mix(black, bg, sinValue * 8.);
 
     /* marbleColor = vec4(vec3(sinValue), 1.); */
 
