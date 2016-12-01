@@ -15,7 +15,7 @@ window.scene = scene
 
 // camera.position.set(0,4,4)
 // camera.position.set(0,0,1.3)
-camera.position.set(0,2,3)
+camera.position.set(0,8,12)
 // camera.position.set(0,0.01,0)
 // camera.updateProjectionMatrix()
 
@@ -26,7 +26,8 @@ const controls = new THREE.OrbitControls(camera, renderer.domElement)
 // === LIGHT ===
 
 const light = new THREE.PointLight(0xffffff, 1, 1000)
-light.position.set(5, 10, 5)
+light.position.set(25, 20, 25)
+scene.add(new THREE.PointLightHelper(light))
 scene.add(light)
 
 const spotLight = new THREE.SpotLight(0xffffff)
@@ -51,13 +52,14 @@ const planeMaterial = new THREE.ShaderMaterial({
   uniforms: Object.assign({}, THREE.ShaderLib.lambert.uniforms, {
     time: { type: 'f', value: 0.0, step: 0.03 },
   }),
-  vertexShader: glslify('./shaders/cmo-vert.glsl'),
+  vertexShader: glslify('./shaders/floor-vert.glsl'),
   fragmentShader: glslify('./shaders/floor-frag.glsl'),
-  lights: true
+  lights: true,
+  // wireframe: true
 })
 
 const planeMaker = () => {
-  const geom = new THREE.PlaneGeometry(100, 100, 10, 10)
+  const geom = new THREE.PlaneGeometry(100, 100, 100, 100)
   // const mat = new THREE.MeshLambertMaterial({ color: 0x6D6961, side: THREE.DoubleSide, wireframe: false })
   const mat = planeMaterial
 
@@ -269,7 +271,7 @@ screen2.position.set(1, 0, 0)
 
 const screen3 = new THREE.Mesh(screenGeometry, marbleMaterial)
 screen3.position.set(0, 4, 0)
-scene.add(screen3)
+// scene.add(screen3)
 
 const skyboxMaterials = [
   noiseSmoothMaterial,
@@ -298,12 +300,11 @@ const coneGeometry = ({
 } = {}) => new THREE.ConeGeometry(radius, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength)
 
 const pyramid = new THREE.Mesh(
-  coneGeometry(),
-  // new THREE.MeshLambertMaterial({ color: 0xDBDBDB })
+  coneGeometry({ radius: 5, height: 10 }),
   marbleMaterial
 )
 
-pyramid.position.set(0, 0.5, 0)
+pyramid.position.set(0, 3, 0)
 scene.add(pyramid)
 
 
@@ -311,6 +312,7 @@ scene.add(pyramid)
 
 const update = (ts, delta) => {
   // noiseSmoothMaterial.uniforms.time.value += pyramidMaterial.uniforms.time.step
+  planeMaterial.uniforms.time.value += planeMaterial.uniforms.time.step
 
   // pyramid.rotation.y += delta * Math.PI / 16
 }
