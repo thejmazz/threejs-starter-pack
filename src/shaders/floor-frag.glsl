@@ -54,8 +54,10 @@ void main() {
     } else {
         color = vec3(baseNoise) + green;
     }
-    color = vec3(baseNoise) + green;
+    /* color = vec3(baseNoise) + green; */
     /* color = green; */
+
+    color = vec3(227./255., 192./255., 134./255.);
 
     vec3 diffuse = color;
 

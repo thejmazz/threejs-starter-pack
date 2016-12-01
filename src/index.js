@@ -14,7 +14,8 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap
 window.scene = scene
 
 // camera.position.set(0,4,4)
-camera.position.set(0,0,1.3)
+// camera.position.set(0,0,1.3)
+camera.position.set(0,2,3)
 // camera.position.set(0,0.01,0)
 // camera.updateProjectionMatrix()
 
@@ -57,7 +58,8 @@ const planeMaterial = new THREE.ShaderMaterial({
 
 const planeMaker = () => {
   const geom = new THREE.PlaneGeometry(100, 100, 10, 10)
-  const mat = new THREE.MeshLambertMaterial({ color: 0x6D6961, side: THREE.DoubleSide, wireframe: false })
+  // const mat = new THREE.MeshLambertMaterial({ color: 0x6D6961, side: THREE.DoubleSide, wireframe: false })
+  const mat = planeMaterial
 
   const plane = new THREE.Mesh(geom, mat)
   plane.rotation.x = - Math.PI/2
@@ -67,7 +69,7 @@ const planeMaker = () => {
 
 let plane = planeMaker()
 plane.receiveShadow = true
-// scene.add(plane)
+scene.add(plane)
 
 // === PYRAMID ===
 
@@ -118,25 +120,6 @@ const pyramidMaterial = new THREE.ShaderMaterial({
   fragmentShader: glslify('./shaders/pyramid-frag.glsl'),
   lights: true
 })
-
-const coneGeometry = ({
-  radius = 1,
-  height = 1,
-  radiusSegments = 3,
-  heightSegments = 1,
-  openEnded = false,
-  thetaStart = 0,
-  thetaLength = 2 * Math.PI
-} = {}) => new THREE.ConeGeometry(radius, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength)
-
-const pyramid = new THREE.Mesh(
-  coneGeometry(),
-  // new THREE.MeshLambertMaterial({ color: 0xDBDBDB })
-  pyramidMaterial
-)
-
-pyramid.position.set(0, 0.5, 0)
-// scene.add(pyramid)
 
 const noiseTexture = noiseTextureMonochrome(256)
 
@@ -235,18 +218,18 @@ function refreshNoise() {
   noiseSmoothMaterial.uniforms.seed.value = Math.random()
 }
 
-const gui = new dat.GUI()
+// const gui = new dat.GUI()
 // const tChange = gui.add(p, 't', 0, 1, 0.01)
 // const weightXChange = gui.add(p, 'weightX', 0, 1, 0.01)
 // const weightYChange = gui.add(p, 'weightY', 0, 1, 0.01)
 // const sChange = gui.add(p, 's', 0, 1, 0.01)
 // const zoomChange = gui.add(p, 'zoom', 0, 1, 0.01)
 // const baboonChange = gui.add(p, 'baboon')
-const sizeChange = gui.add(p, 'turbulenceSize', 0, 256, 1)
-const smoothChange = gui.add(p, 'smooth')
-const timeFactorChange = gui.add(p, 'timeFactor', 0, 1, 0.1)
-const hueChange = gui.add(p, 'hue', 0, 255, 1)
-gui.add(p, 'refreshNoise')
+// const sizeChange = gui.add(p, 'turbulenceSize', 0, 256, 1)
+// const smoothChange = gui.add(p, 'smooth')
+// const timeFactorChange = gui.add(p, 'timeFactor', 0, 1, 0.1)
+// const hueChange = gui.add(p, 'hue', 0, 255, 1)
+// gui.add(p, 'refreshNoise')
 
 // tChange.onChange(t => noiseSmoothMaterial.uniforms.t.value = t)
 // weightXChange.onChange(weightX => noiseSmoothMaterial.uniforms.weightX.value = weightX)
@@ -261,10 +244,10 @@ gui.add(p, 'refreshNoise')
 //   baboonMaterial.uniforms.noiseTexture.value = c ? baboonTexture : noiseTexture
 //   noiseSmoothMaterial.uniforms.noiseTexture.value = c ? baboonTexture : noiseTexture
 // })
-sizeChange.onChange(size => noiseSmoothMaterial.uniforms.size.value = size)
-smoothChange.onChange(isSmooth => noiseSmoothMaterial.uniforms.isSmooth.value = isSmooth)
-timeFactorChange.onChange(timeFactor => noiseSmoothMaterial.uniforms.timeFactor.value = timeFactor)
-hueChange.onChange(hue => noiseSmoothMaterial.uniforms.hue.value = hue)
+// sizeChange.onChange(size => noiseSmoothMaterial.uniforms.size.value = size)
+// smoothChange.onChange(isSmooth => noiseSmoothMaterial.uniforms.isSmooth.value = isSmooth)
+// timeFactorChange.onChange(timeFactor => noiseSmoothMaterial.uniforms.timeFactor.value = timeFactor)
+// hueChange.onChange(hue => noiseSmoothMaterial.uniforms.hue.value = hue)
 
 const screenGeometry = new THREE.PlaneGeometry(1, 1, 1, 1)
 console.log(screenGeometry)
@@ -274,7 +257,7 @@ const screen = new THREE.Mesh(
   baboonMaterial
 )
 screen.position.set(-1, 0, 0)
-scene.add(screen)
+// scene.add(screen)
 
 const screen2 = new THREE.Mesh(
   screenGeometry,
@@ -285,7 +268,7 @@ screen2.position.set(1, 0, 0)
 // scene.add(screen2)
 
 const screen3 = new THREE.Mesh(screenGeometry, marbleMaterial)
-screen3.position.set(1, 0, 0)
+screen3.position.set(0, 4, 0)
 scene.add(screen3)
 
 const skyboxMaterials = [
@@ -302,12 +285,32 @@ const skyBox = new THREE.Mesh(new THREE.CubeGeometry(1, 1, 1), new THREE.MeshFac
 skyBox.applyMatrix(new THREE.Matrix4().makeScale(1, 1, -1))
 // scene.add(skyBox)
 
+// === PYRAMID ===
+
+const coneGeometry = ({
+  radius = 1,
+  height = 1,
+  radiusSegments = 3,
+  heightSegments = 1,
+  openEnded = false,
+  thetaStart = 0,
+  thetaLength = 2 * Math.PI
+} = {}) => new THREE.ConeGeometry(radius, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength)
+
+const pyramid = new THREE.Mesh(
+  coneGeometry(),
+  // new THREE.MeshLambertMaterial({ color: 0xDBDBDB })
+  marbleMaterial
+)
+
+pyramid.position.set(0, 0.5, 0)
+scene.add(pyramid)
 
 
 // === LOOP ===
 
 const update = (ts, delta) => {
-  noiseSmoothMaterial.uniforms.time.value += pyramidMaterial.uniforms.time.step
+  // noiseSmoothMaterial.uniforms.time.value += pyramidMaterial.uniforms.time.step
 
   // pyramid.rotation.y += delta * Math.PI / 16
 }

@@ -169,7 +169,8 @@ void main() {
 
     vec4 marbleColor;
 
-    vec4 bg = vec4(vec3(229./255.), 1.);
+    /* vec4 bg = vec4(vec3(229./255.), 1.); */
+    vec4 bg = vec4(vec3(210./255.), 1.);
     vec4 black = vec4(1.);
 
     // chunky lines
@@ -186,7 +187,8 @@ void main() {
 
     /* marbleColor = vec4(vec3(sinValue), 1.); */
 
-    gl_FragColor = marbleColor;
+    /* gl_FragColor = marbleColor; */
+    diffuse = marbleColor.rgb;
 
     // === lambert shader code ===
 
@@ -225,7 +227,7 @@ void main() {
     #include <normal_flip>
     #include <envmap_fragment>
 
-    /* gl_FragColor = vec4( outgoingLight, diffuseColor.a ); */
+    gl_FragColor = vec4( outgoingLight, diffuseColor.a );
 
     #include <premultiplied_alpha_fragment>
     #include <tonemapping_fragment>
